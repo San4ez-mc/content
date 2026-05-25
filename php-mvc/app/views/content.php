@@ -615,6 +615,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                             <div class="cs-panel-form">
                                 <div class="cs-field"><label>Заголовок</label><input type="text" id="solid-text-title" value="За одне заняття — повна фінансова система" placeholder="Великий заголовок"></div>
                                 <div class="cs-field"><label>Підзаголовок (опційно)</label><input type="text" id="solid-text-subtitle" value="Cashflow · P&amp;L · Баланс" placeholder="Підзаголовок"></div>
+                                <div class="cs-field"><label>Мітка / тег (опційно)</label><input type="text" id="solid-text-extra" placeholder="Напр.: 📌 Лайфхак · Урок 3"></div>
                                 
                                 <div class="cs-field">
                                     <label>Колір фону</label>
@@ -701,7 +702,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                 </td>
             </tr>
             <tr class="cs-data-row" data-filter="story" data-id="social-proof">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">💬</div><div><div class="cs-type-name">Соціальний доказ</div><div class="cs-type-desc">Темний фон + великий відгук у лапках + ім'я автора. Опційна плашка з цифрою результату (формат "Мітка | Значення", напр. "Ріст продажів | +47%"). Trust-контент.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">💬</div><div><div class="cs-type-name">Соціальний доказ</div><div class="cs-type-desc">Скріншот переписки в стилі Telegram — справжнє повідомлення від клієнта + опційна твоя відповідь. Trust-контент без підробок.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -712,14 +713,15 @@ P&L — реальний прибуток | Не оборот, а чистий �
                     <div class="cs-inline-panel">
                         <div class="cs-panel-header">
                             <span style="font-size:20px">💬</span>
-                            <span class="cs-panel-title">Соціальний доказ (Сторіз 9:16)</span>
+                            <span class="cs-panel-title">Переписка-відгук — Telegram style (Сторіз 9:16)</span>
                             <button class="cs-close-btn" onclick="toggleForm('social-proof')">✕</button>
                         </div>
                         <div class="cs-panel-inner">
                             <div class="cs-panel-form">
-                                <div class="cs-field"><label>Цитата / Відгук</label><textarea rows="3" id="social-proof-quote" placeholder="«Після курсу нарешті зрозумів куди йдуть гроші»"></textarea></div>
-                                <div class="cs-field"><label>Автор</label><input type="text" id="social-proof-author" value="" placeholder="Марія, підприємець з Києва"></div>
-                                <div class="cs-field"><label>Ключовий результат</label><input type="text" id="social-proof-result" value="" placeholder="×3 зріст прибутку за 2 місяці"><div class="cs-field-hint">Формат: ×3 зріст продажів</div></div>
+                                <div class="cs-field"><label>Повідомлення клієнта</label><textarea rows="3" id="social-proof-quote" placeholder="Нарешті зрозумів куди йдуть гроші! Вже перший місяць у плюс 😊"></textarea></div>
+                                <div class="cs-field"><label>Ім'я клієнта</label><input type="text" id="social-proof-author" value="" placeholder="Марія К."></div>
+                                <div class="cs-field"><label>Твоя відповідь (опційно)</label><input type="text" id="social-proof-result" value="" placeholder="Так тримати! Це тільки початок 💪"></div>
+                                <div class="cs-field"><label>Дата (опційно)</label><input type="text" id="social-proof-date" value="" placeholder="Сьогодні / 12 травня / вчора"></div>
                                 
                                 <button class="cs-gen-btn" id="btn-social-proof" onclick="generateViaFunnel('content-image-template',{template:'social-proof',width:1080,height:1920},'social-proof')">▶ Згенерувати</button>
                                 <div class="cs-error-box" id="err-social-proof"></div>
@@ -839,9 +841,32 @@ P&L — реальний прибуток | Не оборот, а чистий �
                                     <div class="cs-field-hint">До 8 слайдів. Формат: Заголовок | Підзаголовок</div>
                                 </div>
                                 <div class="cs-field">
-                                    <label>Шаблон</label>
-                                    <select id="carousel-story-template"><option value="default">Default</option></select>
+                                    <label>Колір фону</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="carousel-story-bgColor" value="#0f172a" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('carousel-story-bgColor-text').value=this.value">
+                                        <input type="text" id="carousel-story-bgColor-text" value="#0f172a" style="flex:1;" oninput="syncColorText('carousel-story-bgColor','carousel-story-bgColor-text')">
+                                    </div>
                                 </div>
+                                <div class="cs-field">
+                                    <label>Акцентний колір</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="carousel-story-accent" value="#3b82f6" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('carousel-story-accent-text').value=this.value">
+                                        <input type="text" id="carousel-story-accent-text" value="#3b82f6" style="flex:1;" oninput="syncColorText('carousel-story-accent','carousel-story-accent-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Стиль фону</label>
+                                    <select id="carousel-story-bgStyle">
+                                        <option value="flat">Монохромний</option>
+                                        <option value="gradient">Градієнт (темний)</option>
+                                        <option value="radial">Радіальне сяйво</option>
+                                        <option value="mesh">Mesh-градієнт</option>
+                                        <option value="aurora">Аврора</option>
+                                        <option value="grid">Сітка</option>
+                                        <option value="dots">Крапки</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" id="carousel-story-template" value="carousel-story">
                                 <button class="cs-gen-btn" id="btn-carousel-story" onclick="generateCarousel('carousel-story',1080,1920)">▶ Згенерувати</button>
                                 <div class="cs-error-box" id="err-carousel-story"></div>
                             </div>
@@ -1271,6 +1296,7 @@ async function generateViaFunnel(funnelSlug, extraParams, prefix) {
         brandHandle: document.getElementById(prefix + '-brandHandle')?.value?.trim() || '',
         template:    document.getElementById(prefix + '-template')?.value || 'default',
         bgStyle:     document.getElementById(prefix + '-bgStyle')?.value || 'flat',
+        extra:       document.getElementById(prefix + '-extra')?.value?.trim() || '',
         ...extraParams,
     };
 
@@ -1340,7 +1366,7 @@ async function pollStatus(jobId, prefix) {
     return null;
 }
 
-function showImageResult(job, prefix, funnelSlug, extraParams) {
+function showImageResult(job, prefix, funnelSlug, extraParams, _w, _h) {
     const previewDiv = document.getElementById('preview-' + prefix);
     if (job.mediaType === 'image') {
         const src = 'data:' + (job.contentType || 'image/png') + ';base64,' + job.imageBase64;
@@ -1377,7 +1403,7 @@ function showImageResult(job, prefix, funnelSlug, extraParams) {
             <div style="font-size:13px;font-weight:600;color:#374151;">${slides.length} слайдів</div>
             <div class="cs-slides-strip">${imgTags}</div>
             <div class="cs-result-actions" style="max-width:440px;flex-wrap:wrap;">${dlLinks}</div>
-            <button class="cs-regen-btn" style="width:100%;margin-top:4px;" onclick="generateCarousel(prefix,width,height)">↻ Перегенерувати</button>`;
+            <button class="cs-regen-btn" style="width:100%;margin-top:4px;" onclick="generateCarousel('${prefix}',${_w||1080},${_h||1350})">↻ Перегенерувати</button>`;
     }
 }
 
@@ -1406,6 +1432,9 @@ async function generateCarousel(prefix='carousel', width=1080, height=1350) {
         slides,
         width,
         height,
+        bgColor: document.getElementById(prefix + '-bgColor')?.value?.trim() || '#0f172a',
+        accent:  document.getElementById(prefix + '-accent')?.value?.trim()  || '#3b82f6',
+        bgStyle: document.getElementById(prefix + '-bgStyle')?.value || 'flat',
     };
 
     btn.disabled = true;
@@ -1433,7 +1462,7 @@ async function generateCarousel(prefix='carousel', width=1080, height=1350) {
     btn.disabled = false;
     btn.innerHTML = '▶ Згенерувати';
     if (!result) return;
-    showImageResult(result, prefix, 'content-carousel', {});
+    showImageResult(result, prefix, 'content-carousel', {}, width, height);
 }
 
 // ── Generate via HyperFrames ──
