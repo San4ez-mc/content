@@ -41,6 +41,7 @@ class ContentApiController extends BaseController
             'content-video-remotion',
             'content-avatar-heygen',
             'content-avatar-budget',
+            'content-image-template',
         ];
 
         if (!in_array($funnel, $allowedFunnels)) {

@@ -51,7 +51,8 @@
         .cs-icon-post { background: #fff7ed; }
 
         .cs-type-name { font-size: 14px; font-weight: 600; color: #111827; }
-        .cs-type-desc { font-size: 12px; color: #6b7280; margin-top: 1px; }
+        .cs-type-desc { font-size: 12px; color: #6b7280; margin-top: 1px; line-height: 1.45; }
+        .cs-funnel-tag { display: inline-block; margin-top: 6px; font-size: 10px; font-family: monospace; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; border-radius: 4px; padding: 2px 8px; font-weight: 600; letter-spacing: .02em; }
 
         .cs-badge {
             display: inline-flex; align-items: center; padding: 3px 10px;
@@ -333,7 +334,7 @@
                         <div class="cs-icon cs-icon-img">🧑</div>
                         <div>
                             <div class="cs-type-name">Силует + плашки</div>
-                            <div class="cs-type-desc">admaksmedia: вирізаний силует людини на брендовому фоні + текстові плашки</div>
+                            <div class="cs-type-desc">Фото → remove-bg (видалення фону) → силует на брендовому фоні. Slide-builder рендерить PNG: плашка з заголовком та підзаголовком поверх силуету. Формат 9:16 (Stories / TikTok).</div><span class="cs-funnel-tag">&#128279; content-stories-generator</span>
                         </div>
                     </div>
                 </td>
@@ -397,7 +398,7 @@
                         <div class="cs-icon cs-icon-img">🧑</div>
                         <div>
                             <div class="cs-type-name">Силует + плашки</div>
-                            <div class="cs-type-desc">admaksmedia: той самий стиль, але у форматі поста Instagram</div>
+                            <div class="cs-type-desc">Той самий силует + плашки, але у форматі 4:5 (1080×1350). Оптимально для постів Instagram та Pinterest.</div><span class="cs-funnel-tag">&#128279; content-stories-generator</span>
                         </div>
                     </div>
                 </td>
@@ -461,7 +462,7 @@
                         <div class="cs-icon cs-icon-post">🗂️</div>
                         <div>
                             <div class="cs-type-name">Карусель з безшовним фоном</div>
-                            <div class="cs-type-desc">Широке панорамне полотно → нарізка на N слайдів для Instagram carousel</div>
+                            <div class="cs-type-desc">Одне широке полотно з безшовним переходом між слайдами (до 8 шт.). Sharp нарізає на окремі кадри. Ідеально для освітнього контенту в каруселях.</div><span class="cs-funnel-tag">&#128279; content-carousel</span>
                         </div>
                     </div>
                 </td>
@@ -519,7 +520,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
 
 
             <tr class="cs-data-row" data-filter="img" data-id="solid-text">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">✍️</div><div><div class="cs-type-name">Solid фон + великий текст</div><div class="cs-type-desc">Монохромний темний/зелений фон, крупний акцентний текст (мінімалістичний стиль)</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">✍️</div><div><div class="cs-type-name">Solid фон + великий текст</div><div class="cs-type-desc">Брендовий фон (твій колір) + акцентна лінія + крупний bold-заголовок. Без фото — тільки колір, типографіка та нікнейм. Рендер через slide-builder.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -565,7 +566,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                 </td>
             </tr>
             <tr class="cs-data-row" data-filter="img" data-id="photo-text">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">🖼️</div><div><div class="cs-type-name">Фото фон + текстові плашки</div><div class="cs-type-desc">kors.danil: атмосферне фото як фон, текст у плашках з напівпрозорим фоном</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">🖼️</div><div><div class="cs-type-name">Фото фон + текстові плашки</div><div class="cs-type-desc">Фото займає весь кадр як повне тло. Подвійний vignette (темніє зверху і знизу). Заголовок + підзаголовок на напівпрозорій плашці в нижній безпечній зоні.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -610,7 +611,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                 </td>
             </tr>
             <tr class="cs-data-row" data-filter="img" data-id="social-proof">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">💬</div><div><div class="cs-type-name">Соціальний доказ</div><div class="cs-type-desc">Скрін переписки з відгуком + цифра результату на фото-фоні</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">💬</div><div><div class="cs-type-name">Соціальний доказ</div><div class="cs-type-desc">Темний фон + великий відгук у лапках + ім'я автора. Опційна плашка з цифрою результату (формат "Мітка | Значення", напр. "Ріст продажів | +47%"). Trust-контент.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -643,7 +644,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                 </td>
             </tr>
             <tr class="cs-data-row" data-filter="img" data-id="promo">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">📣</div><div><div class="cs-type-name">Рекламна / Анонс події</div><div class="cs-type-desc">Постер з логотипом, заголовком, датою, ціною або CTA</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">📣</div><div><div class="cs-type-name">Рекламна / Анонс події</div><div class="cs-type-desc">Постер-анонс: бейдж (напр. "Знижка"), заголовок, дата, CTA-кнопка. Твоє фото як фон або брендовий колір. Підходить для заходів, курсів, акцій.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-multi">Сторіз / Пост</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 / 4:5</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -717,7 +718,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
 
             <!-- V-1: Список тез -->
             <tr class="cs-data-row" data-filter="reel" data-id="bullet-list">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📋</div><div><div class="cs-type-name">Рілс: список тез</div><div class="cs-type-desc">Анімовані bullet-points, кожен пункт з'являється по черзі</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📋</div><div><div class="cs-type-name">Рілс: список тез</div><div class="cs-type-desc">Remotion: bullet-points з'являються по черзі з анімацією. Заголовок зверху, до 6 пунктів. Рендер у .mp4 формат Reels.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -761,7 +762,7 @@ P&L: бачиш реальний прибуток
 
             <!-- V-2: Bar Chart -->
             <tr class="cs-data-row" data-filter="reel" data-id="bar-chart">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📊</div><div><div class="cs-type-name">Рілс: Bar Chart</div><div class="cs-type-desc">Анімований стовпчастий графік, ідеально для фінансових показників</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📊</div><div><div class="cs-type-name">Рілс: Bar Chart</div><div class="cs-type-desc">Remotion: стовпчики зростають зліва направо з анімацією. До 6 категорій із значеннями. Ідеально для фінансових порівнянь.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
@@ -804,7 +805,7 @@ P&L: бачиш реальний прибуток
 
             <!-- V-3 / V-4 / V-5 / V-6 — coming soon -->
             <tr class="cs-data-row" data-filter="reel" data-id="video-subs">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎙️</div><div><div class="cs-type-name">Монтаж + статичні субтитри</div><div class="cs-type-desc">Відео обличчя → видалення пауз → Whisper → SRT субтитри через FFmpeg</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎙️</div><div><div class="cs-type-name">Монтаж + статичні субтитри</div><div class="cs-type-desc">Відео → Whisper (транскрипція) → FFmpeg: автоматичне видалення пауз та єкань + статичні SRT-субтитри. Вихід: .mp4 для Reels / TikTok.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
                 <td><span class="cs-status-dev"><span class="cs-status-dot dot-amber"></span>Потрібна форма</span></td>
@@ -852,7 +853,7 @@ P&L: бачиш реальний прибуток
                 </td>
             </tr>
             <tr class="cs-data-row" data-filter="reel" data-id="video-karaoke">
-                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎤</div><div><div class="cs-type-name">Монтаж + karaoke субтитри</div><div class="cs-type-desc">Відео → Whisper → Remotion: слово підсвічується і пульсує по мірі мовлення</div></div></div></td>
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎤</div><div><div class="cs-type-name">Монтаж + karaoke субтитри</div><div class="cs-type-desc">Відео → Whisper → Remotion: karaoke-субтитри — кожне слово підсвічується і збільшується синхронно з мовленням. Ефект pulsation. Вихід: анімований .mp4.</div><span class="cs-funnel-tag">&#128279; content-video-remotion</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
