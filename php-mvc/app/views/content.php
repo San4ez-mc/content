@@ -149,7 +149,7 @@
         .cs-preview-placeholder span:first-child { font-size: 36px; }
 
         .cs-img-box {
-            width: 200px; border-radius: 12px; overflow: hidden;
+            width: 270px; border-radius: 12px; overflow: hidden;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
         .cs-img-box img { width: 100%; height: auto; display: block; }
@@ -166,7 +166,7 @@
             border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
-        .cs-result-actions { display: flex; gap: 8px; width: 200px; flex-wrap: wrap; }
+        .cs-result-actions { display: flex; gap: 8px; width: 270px; flex-wrap: wrap; }
         .cs-action-btn {
             flex: 1; padding: 6px 10px; background: #f3f4f6; border: none;
             border-radius: 7px; font-size: 12px; cursor: pointer; color: #374151;
@@ -368,7 +368,7 @@
                                 </div>
                                 <div class="cs-field"><label>Заголовок</label><input type="text" id="silhouette-story-text" value="За одну зйомку — 15–30 відео" placeholder="Текст заголовку"></div>
                                 <div class="cs-field"><label>Підзаголовок (опційно)</label><input type="text" id="silhouette-story-subText" value="що тримають блог активним 2–3 місяці" placeholder="Текст підзаголовку"></div>
-                                <div class="cs-field"><label>@нік бренду</label><input type="text" id="silhouette-story-brandHandle" value="@fineko.space" placeholder="@brand"></div>
+                                
                                 <div class="cs-field">
                                     <label>Шаблон</label>
                                     <select id="silhouette-story-template">
@@ -432,7 +432,7 @@
                                 </div>
                                 <div class="cs-field"><label>Заголовок</label><input type="text" id="silhouette-post-text" value="Ключова різниця — наявність фундаменту" placeholder="Текст заголовку"></div>
                                 <div class="cs-field"><label>Підзаголовок (опційно)</label><input type="text" id="silhouette-post-subText" value="система і фінансовий запас" placeholder="Текст підзаголовку"></div>
-                                <div class="cs-field"><label>@нік бренду</label><input type="text" id="silhouette-post-brandHandle" value="@fineko.space" placeholder="@brand"></div>
+                                
                                 <div class="cs-field">
                                     <label>Шаблон</label>
                                     <select id="silhouette-post-template">
