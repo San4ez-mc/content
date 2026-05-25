@@ -161,6 +161,13 @@
         .cs-video-box video { width: 100%; height: 100%; object-fit: contain; }
 
         .cs-slides-strip { display: flex; gap: 12px; flex-wrap: wrap; max-width: 980px; }
+        .cs-block-header td {
+            background: linear-gradient(90deg,#eef2ff,#f8faff);
+            font-size: 11px; font-weight: 700; color: #4f46e5;
+            padding: 10px 18px 8px; border-top: 3px solid #e0e7ff;
+            border-bottom: 1px solid #e0e7ff; letter-spacing: .08em;
+            text-transform: uppercase; user-select: none;
+        }
         .cs-slides-strip img {
             width: 320px; height: auto; max-height: 570px; object-fit: cover;
             border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -308,14 +315,12 @@
     <div class="cs-page-sub">Вибери тип → заповни поля → натисни «Згенерувати» → отримай результат</div>
 
     <div class="cs-format-tabs">
-        <button class="cs-tab active" data-filter="all">Всі</button>
-        <button class="cs-tab" data-filter="img">🖼 Галерея</button>
-        <button class="cs-tab" data-filter="reel">🎬 Типи контенту</button>
+        <button class="cs-tab active" data-filter="story">🎬 Сторіз</button>
+        <button class="cs-tab" data-filter="post">📷 Пости</button>
+        <button class="cs-tab" data-filter="video">🎥 Відео</button>
     </div>
 
-    <!-- ══ IMAGES ══ -->
-    <div class="cs-section-label" data-cat="img">🖼 Галерея</div>
-    <table class="cs-table" data-cat="img">
+    <table class="cs-table">
         <thead>
             <tr>
                 <th style="width:340px">Тип контенту</th>
@@ -327,8 +332,11 @@
         </thead>
         <tbody>
 
+            <!-- ══ СТОРІЗ ══ -->
+            <tr class="cs-block-header" data-filter="story"><td colspan="5">🎭 Силует</td></tr>
+
             <!-- I-1: Силует + плашки, Сторіз -->
-            <tr class="cs-data-row" data-filter="img" data-id="silhouette-story">
+            <tr class="cs-data-row" data-filter="story" data-id="silhouette-story">
                 <td>
                     <div class="cs-type-cell">
                         <div class="cs-icon cs-icon-img">🧑</div>
@@ -418,8 +426,20 @@
                 </td>
             </tr>
 
+            <!-- Silhouette external comparison placeholder -->
+            <tr class="cs-data-row" data-filter="story" data-id="silhouette-story-ext">
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img" style="background:#f5f3ff;border-color:#ddd6fe">🔄</div><div><div class="cs-type-name">Силует + Текст (зовнішній API)</div><div class="cs-type-desc">Вирізання силуету через зовнішній сервіс для A/B порівняння якості з нашим мікросервісом. Підключи будь-який remove.bg / AI сервіс.</div><span class="cs-funnel-tag" style="background:#ede9fe;color:#5b21b6;border-color:#c4b5fd">🔗 незабаром</span></div></div></td>
+                <td><span class="cs-badge cs-badge-img">Сторіз</span></td>
+                <td style="font-size:13px;color:#374151;">9:16 · 1080×1920</td>
+                <td><span class="cs-status-ready" style="color:#d97706"><span class="cs-status-dot" style="background:#d97706"></span>Планується</span></td>
+                <td><button class="cs-launch-btn" disabled style="opacity:.4;cursor:not-allowed">▶ Запустити</button></td>
+            </tr>
+
+            <!-- ══ ПОСТИ ══ -->
+            <tr class="cs-block-header" data-filter="post"><td colspan="5">🎭 Силует</td></tr>
+
             <!-- I-2: Силует + плашки, Пост -->
-            <tr class="cs-data-row" data-filter="img" data-id="silhouette-post">
+            <tr class="cs-data-row" data-filter="post" data-id="silhouette-post">
                 <td>
                     <div class="cs-type-cell">
                         <div class="cs-icon cs-icon-img">🧑</div>
@@ -510,18 +530,19 @@
             </tr>
 
             <!-- I-8: Карусель -->
-            <tr class="cs-data-row" data-filter="img" data-id="carousel">
+            <tr class="cs-block-header" data-filter="post"><td colspan="5">🗂 Карусель</td></tr>
+            <tr class="cs-data-row" data-filter="post" data-id="carousel">
                 <td>
                     <div class="cs-type-cell">
                         <div class="cs-icon cs-icon-post">🗂️</div>
                         <div>
-                            <div class="cs-type-name">Карусель з безшовним фоном</div>
+                            <div class="cs-type-name">Карусель-Пост (4:5)</div>
                             <div class="cs-type-desc">Одне широке полотно з безшовним переходом між слайдами (до 8 шт.). Sharp нарізає на окремі кадри. Ідеально для освітнього контенту в каруселях.</div><span class="cs-funnel-tag">&#128279; content-carousel</span>
                         </div>
                     </div>
                 </td>
                 <td><span class="cs-badge cs-badge-post">Карусель</span></td>
-                <td style="font-size:13px;color:#374151;">4:5 · 1080×1350 × N</td>
+                <td style="font-size:13px;color:#374151;">4:5 · 1080×1350</td>
                 <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
                 <td><button class="cs-launch-btn" onclick="toggleForm('carousel')">▶ Запустити</button></td>
             </tr>
@@ -574,7 +595,8 @@ P&L — реальний прибуток | Не оборот, а чистий �
             </tr>
 
 
-            <tr class="cs-data-row" data-filter="img" data-id="solid-text">
+            <tr class="cs-block-header" data-filter="story"><td colspan="5">🖋 Текст та фон</td></tr>
+            <tr class="cs-data-row" data-filter="story" data-id="solid-text">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">✍️</div><div><div class="cs-type-name">Solid фон + великий текст</div><div class="cs-type-desc">Брендовий фон (твій колір) + акцентна лінія + крупний bold-заголовок. Без фото — тільки колір, типографіка та нікнейм. Рендер через slide-builder.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
@@ -632,7 +654,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                     </div>
                 </td>
             </tr>
-            <tr class="cs-data-row" data-filter="img" data-id="photo-text">
+            <tr class="cs-data-row" data-filter="story" data-id="photo-text">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">🖼️</div><div><div class="cs-type-name">Фото фон + текстові плашки</div><div class="cs-type-desc">Фото займає весь кадр як повне тло. Подвійний vignette (темніє зверху і знизу). Заголовок + підзаголовок на напівпрозорій плашці в нижній безпечній зоні.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
@@ -678,7 +700,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                     </div>
                 </td>
             </tr>
-            <tr class="cs-data-row" data-filter="img" data-id="social-proof">
+            <tr class="cs-data-row" data-filter="story" data-id="social-proof">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">💬</div><div><div class="cs-type-name">Соціальний доказ</div><div class="cs-type-desc">Темний фон + великий відгук у лапках + ім'я автора. Опційна плашка з цифрою результату (формат "Мітка | Значення", напр. "Ріст продажів | +47%"). Trust-контент.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
                 <td style="font-size:13px;color:#374151;">9:16</td>
@@ -711,7 +733,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                     </div>
                 </td>
             </tr>
-            <tr class="cs-data-row" data-filter="img" data-id="promo">
+            <tr class="cs-data-row" data-filter="story" data-id="promo">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">📣</div><div><div class="cs-type-name">Рекламна / Анонс події</div><div class="cs-type-desc">Постер-анонс: бейдж (напр. "Знижка"), заголовок, дата, CTA-кнопка. Твоє фото як фон або брендовий колір. Підходить для заходів, курсів, акцій.</div><span class="cs-funnel-tag">&#128279; content-image-template</span></div></div></td>
                 <td><span class="cs-badge cs-badge-multi">Сторіз / Пост</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 / 4:5</td>
@@ -768,25 +790,77 @@ P&L — реальний прибуток | Не оборот, а чистий �
                 </td>
             </tr>
 
-        </tbody>
-    </table>
 
-    <!-- ══ VIDEO ══ -->
-    <div class="cs-section-label" data-cat="reel">🎬 Типи контенту</div>
-    <table class="cs-table" data-cat="reel">
-        <thead>
-            <tr>
-                <th style="width:340px">Тип контенту</th>
-                <th>Формат</th>
-                <th>Розмір</th>
-                <th>Статус</th>
-                <th style="width:130px">Дія</th>
+            <!-- ══ Карусель-Сторіз ══ -->
+            <tr class="cs-block-header" data-filter="story"><td colspan="5">🗂 Карусель-Сторіз</td></tr>
+            <tr class="cs-data-row" data-filter="story" data-id="carousel-story">
+                <td>
+                    <div class="cs-type-cell">
+                        <div class="cs-icon cs-icon-post">🗂️</div>
+                        <div>
+                            <div class="cs-type-name">Карусель-Сторіз (9:16)</div>
+                            <div class="cs-type-desc">Та ж карусель з безшовним фоном, але в форматі 9:16 для Stories. Всі слайди в єдиному стилі — ідеально для серії освітніх сторіз.</div><span class="cs-funnel-tag">&#128279; content-carousel</span>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="cs-badge cs-badge-img">Сторіз</span></td>
+                <td style="font-size:13px;color:#374151;">9:16 · 1080×1920</td>
+                <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
+                <td><button class="cs-launch-btn" onclick="toggleForm('carousel-story')">▶ Запустити</button></td>
             </tr>
-        </thead>
-        <tbody>
+            <tr class="cs-inline-row" id="form-carousel-story">
+                <td colspan="5">
+                    <div class="cs-inline-panel">
+                        <div class="cs-panel-header">
+                            <span style="font-size:20px">🗂️</span>
+                            <span class="cs-panel-title">Карусель-Сторіз</span>
+                            <button class="cs-close-btn" onclick="toggleForm('carousel-story')">✕</button>
+                        </div>
+                        <div class="cs-panel-inner">
+                            <div class="cs-panel-form">
+                                <div class="cs-field">
+                                    <label>Фото (для силуету)</label>
+                                    <div class="cs-photo-pick">
+                                        <div class="cs-photo-thumb" id="photo-thumb-carousel-story" onclick="openGallery('carousel-story')">📷</div>
+                                        <div class="cs-photo-pick-btns">
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('carousel-story')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('carousel-story')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
+                                            <span class="cs-pick-url-toggle" onclick="toggleUrlInput('carousel-story')">або вставити URL вручну</span>
+                                            <input type="url" class="cs-photo-url-input" id="carousel-story-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('carousel-story',this.value)">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="carousel-story-photoUrl" value="">
+                                </div>
+                                <div class="cs-field">
+                                    <label>Слайди (по одному на рядок: Заголовок | Підзаголовок)</label>
+                                    <textarea rows="5" id="carousel-story-slides">Cashflow — основа фінансів | Знай куди йдуть гроші
+P&L — реальний прибуток | Не оборот, а чистий заробіток
+Баланс — активи і борги | Повна картина бізнесу</textarea>
+                                    <div class="cs-field-hint">До 8 слайдів. Формат: Заголовок | Підзаголовок</div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Шаблон</label>
+                                    <select id="carousel-story-template"><option value="default">Default</option></select>
+                                </div>
+                                <button class="cs-gen-btn" id="btn-carousel-story" onclick="generateCarousel('carousel-story',1080,1920)">▶ Згенерувати</button>
+                                <div class="cs-error-box" id="err-carousel-story"></div>
+                            </div>
+                            <div class="cs-panel-preview">
+                                <div id="preview-carousel-story">
+                                    <div class="cs-preview-placeholder"><span>🗂️</span><span>Слайди тут</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+
+            <!-- ══ ВІДЕО ══ -->
+            <tr class="cs-block-header" data-filter="video"><td colspan="5">🎬 Анімована графіка (Remotion)</td></tr>
 
             <!-- V-1: Список тез -->
-            <tr class="cs-data-row" data-filter="reel" data-id="bullet-list">
+            <tr class="cs-data-row" data-filter="video" data-id="bullet-list">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📋</div><div><div class="cs-type-name">Рілс: список тез</div><div class="cs-type-desc">Remotion: bullet-points з'являються по черзі з анімацією. Заголовок зверху, до 6 пунктів. Рендер у .mp4 формат Reels.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
@@ -830,7 +904,7 @@ P&L: бачиш реальний прибуток
             </tr>
 
             <!-- V-2: Bar Chart -->
-            <tr class="cs-data-row" data-filter="reel" data-id="bar-chart">
+            <tr class="cs-data-row" data-filter="video" data-id="bar-chart">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">📊</div><div><div class="cs-type-name">Рілс: Bar Chart</div><div class="cs-type-desc">Remotion: стовпчики зростають зліва направо з анімацією. До 6 категорій із значеннями. Ідеально для фінансових порівнянь.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
@@ -873,7 +947,8 @@ P&L: бачиш реальний прибуток
             </tr>
 
             <!-- V-3 / V-4 / V-5 / V-6 — coming soon -->
-            <tr class="cs-data-row" data-filter="reel" data-id="video-subs">
+            <tr class="cs-block-header" data-filter="video"><td colspan="5">✂️ Монтаж відео</td></tr>
+            <tr class="cs-data-row" data-filter="video" data-id="video-subs">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎙️</div><div><div class="cs-type-name">Монтаж + статичні субтитри</div><div class="cs-type-desc">Відео → Whisper (транскрипція) → FFmpeg: автоматичне видалення пауз та єкань + статичні SRT-субтитри. Вихід: .mp4 для Reels / TikTok.</div><span class="cs-funnel-tag">&#128279; content-video-basic-subs</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
@@ -921,7 +996,7 @@ P&L: бачиш реальний прибуток
                     </div>
                 </td>
             </tr>
-            <tr class="cs-data-row" data-filter="reel" data-id="video-karaoke">
+            <tr class="cs-data-row" data-filter="video" data-id="video-karaoke">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎤</div><div><div class="cs-type-name">Монтаж + karaoke субтитри</div><div class="cs-type-desc">Відео → Whisper → Remotion: karaoke-субтитри — кожне слово підсвічується і збільшується синхронно з мовленням. Ефект pulsation. Вихід: анімований .mp4.</div><span class="cs-funnel-tag">&#128279; content-video-remotion</span></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
@@ -969,14 +1044,15 @@ P&L: бачиш реальний прибуток
                     </div>
                 </td>
             </tr>
-            <tr class="cs-data-row" data-filter="reel" data-id="avatar-heygen">
+            <tr class="cs-block-header" data-filter="video"><td colspan="5">🤖 Аватар</td></tr>
+            <tr class="cs-data-row" data-filter="video" data-id="avatar-heygen">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🤖</div><div><div class="cs-type-name">Talking Head: HeyGen аватар</div><div class="cs-type-desc">Сценарій → HeyGen → відео з цифровим аватаром і клонованим голосом</div></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
                 <td><span class="cs-status-dev"><span class="cs-status-dot dot-amber"></span>Потрібен API-ключ</span></td>
                 <td><button class="cs-soon-btn" title="Потребує налаштування HeyGen API">🔑 API</button></td>
             </tr>
-            <tr class="cs-data-row" data-filter="reel" data-id="avatar-budget">
+            <tr class="cs-data-row" data-filter="video" data-id="avatar-budget">
                 <td><div class="cs-type-cell"><div class="cs-icon cs-icon-reel">🎭</div><div><div class="cs-type-name">Talking Head: Бюджетний (~$0.20)</div><div class="cs-type-desc">ElevenLabs озвучує текст → LivePortrait оживляє фото синхронно зі звуком</div></div></div></td>
                 <td><span class="cs-badge cs-badge-reel">Рілс</span></td>
                 <td style="font-size:13px;color:#374151;">9:16 відео</td>
@@ -998,26 +1074,25 @@ P&L: бачиш реальний прибуток
 const HF_API = 'https://hyperframes.flows.fineko.space';
 
 // ── Filter tabs ──
+function applyFilter(filter) {
+    document.querySelectorAll('.cs-data-row, .cs-block-header').forEach(row => {
+        const match = row.dataset.filter === filter;
+        row.style.display = match ? '' : 'none';
+        if (!match && row.classList.contains('cs-data-row')) {
+            const fRow = document.getElementById('form-' + row.dataset.id);
+            if (fRow) fRow.classList.remove('open');
+        }
+    });
+}
 document.querySelectorAll('.cs-tab').forEach(tab => {
     tab.addEventListener('click', function () {
         document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
         this.classList.add('active');
-        const filter = this.dataset.filter;
-        document.querySelectorAll('.cs-data-row').forEach(row => {
-            const match = filter === 'all' || row.dataset.filter === filter;
-            row.style.display = match ? '' : 'none';
-            if (!match) {
-                const fRow = document.getElementById('form-' + row.dataset.id);
-                if (fRow) fRow.classList.remove('open');
-            }
-        });
-        document.querySelectorAll('.cs-section-label, .cs-table').forEach(el => {
-            const cat = el.dataset.cat;
-            if (!cat) return;
-            el.style.display = (filter === 'all' || filter === cat) ? '' : 'none';
-        });
+        applyFilter(this.dataset.filter);
     });
 });
+// init: show story tab on load
+applyFilter('story');
 
 // ── Toggle inline form ──
 function toggleForm(id) {
@@ -1302,18 +1377,17 @@ function showImageResult(job, prefix, funnelSlug, extraParams) {
             <div style="font-size:13px;font-weight:600;color:#374151;">${slides.length} слайдів</div>
             <div class="cs-slides-strip">${imgTags}</div>
             <div class="cs-result-actions" style="max-width:440px;flex-wrap:wrap;">${dlLinks}</div>
-            <button class="cs-regen-btn" style="width:100%;margin-top:4px;" onclick="generateCarousel()">↻ Перегенерувати</button>`;
+            <button class="cs-regen-btn" style="width:100%;margin-top:4px;" onclick="generateCarousel(prefix,width,height)">↻ Перегенерувати</button>`;
     }
 }
 
 // ── Generate Carousel ──
-async function generateCarousel() {
-    const prefix = 'carousel';
+async function generateCarousel(prefix='carousel', width=1080, height=1350) {
     const btn = document.getElementById('btn-' + prefix);
     const errBox = document.getElementById('err-' + prefix);
     const previewDiv = document.getElementById('preview-' + prefix);
 
-    const rawSlides = (document.getElementById('carousel-slides')?.value || '').trim();
+    const rawSlides = (document.getElementById(prefix + '-slides')?.value || '').trim();
     if (!rawSlides) { errBox.textContent = 'Додай хоча б один слайд'; errBox.style.display = 'block'; return; }
 
     const slides = rawSlides.split('\n').map(line => {
@@ -1323,14 +1397,15 @@ async function generateCarousel() {
 
     if (slides.length < 2) { errBox.textContent = 'Потрібно мінімум 2 слайди'; errBox.style.display = 'block'; return; }
 
-    const photoUrl = document.getElementById('carousel-photoUrl')?.value?.trim() || '';
+    const photoUrl = document.getElementById(prefix + '-photoUrl')?.value?.trim() || '';
     if (!photoUrl) { errBox.textContent = 'Вибери або завантаж фото'; errBox.style.display = 'block'; return; }
 
     const params = {
         photoUrl,
-        brandHandle: document.getElementById('carousel-brandHandle')?.value?.trim() || '',
-        template:    document.getElementById('carousel-template')?.value || 'default',
+        template: document.getElementById(prefix + '-template')?.value || 'default',
         slides,
+        width,
+        height,
     };
 
     btn.disabled = true;
