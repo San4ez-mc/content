@@ -68,6 +68,26 @@
             flex: 1;
             min-width: 260px;
         }
+        .drop-zone {
+            border: 2px dashed #93c5fd;
+            border-radius: 12px;
+            padding: 28px 20px;
+            text-align: center;
+            background: #f0f9ff;
+            cursor: pointer;
+            transition: background .15s, border-color .15s;
+            margin-bottom: 14px;
+        }
+        .drop-zone.drag-over { background: #dbeafe; border-color: #3b82f6; }
+        .drop-zone .dz-icon { font-size: 36px; margin-bottom: 8px; }
+        .drop-zone .dz-text { font-size: 15px; color: #1e40af; font-weight: 600; }
+        .drop-zone .dz-hint { font-size: 12px; color: #64748b; margin-top: 4px; }
+        .upload-progress-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+        .upload-progress-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+        .upload-progress-bar-wrap { flex: 1; background: #e2e8f0; border-radius: 4px; height: 6px; }
+        .upload-progress-bar { background: #3b82f6; height: 6px; border-radius: 4px; width: 0%; transition: width .2s; }
+        .upload-status-ok { color: #16a34a; font-weight: 600; }
+        .upload-status-err { color: #dc2626; }
 
         .images-grid {
             display: grid;
@@ -412,10 +432,18 @@
                     <p style="color:#64748b;font-size:12px;margin-bottom:12px;">Папка проєкту:
                         <code>public/uploads/source_images/<?php echo htmlspecialchars($sourceFolderName, ENT_QUOTES, 'UTF-8'); ?>/</code>
                     </p>
-                    <form method="POST" action="/images/upload" enctype="multipart/form-data" class="upload-form">
-                        <input type="file" name="source_image" accept="image/*" required>
-                        <button type="submit" class="btn btn-primary">Завантажити</button>
-                    </form>
+                    <div class="drop-zone" id="drop-zone"
+                         onclick="document.getElementById('dz-input').click()"
+                         ondragover="dzOver(event)"
+                         ondragleave="dzLeave(event)"
+                         ondrop="dzDrop(event)">
+                        <div class="dz-icon">📤</div>
+                        <div class="dz-text">Перетягни фото сюди або натисни для вибору</div>
+                        <div class="dz-hint">JPG, PNG, GIF, WebP — до 10 МБ кожне &nbsp;·&nbsp; Можна вибрати кілька одразу</div>
+                        <input type="file" id="dz-input" accept="image/*" multiple style="display:none"
+                               onchange="dzFiles(this.files)">
+                    </div>
+                    <div class="upload-progress-list" id="upload-progress-list"></div>
                 </div>
 
                 <div class="images-grid">
@@ -698,6 +726,62 @@
                 .catch(error => {
                     alert('❌ Помилка: ' + error.message);
                 });
+        }
+
+        // ── Drag-and-drop multi-upload ──
+        function dzOver(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.add('drag-over');
+        }
+        function dzLeave(e) {
+            document.getElementById('drop-zone').classList.remove('drag-over');
+        }
+        function dzDrop(e) {
+            e.preventDefault();
+            document.getElementById('drop-zone').classList.remove('drag-over');
+            const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+            if (files.length) dzFiles(files);
+        }
+        async function dzFiles(fileList) {
+            const files = [...fileList];
+            if (!files.length) return;
+            const list = document.getElementById('upload-progress-list');
+            list.innerHTML = '';
+            let anyOk = false;
+
+            for (const file of files) {
+                const safeId = 'f' + Math.random().toString(36).slice(2);
+                const row = document.createElement('div');
+                row.className = 'upload-progress-item';
+                row.innerHTML =
+                    '<span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + file.name + '</span>' +
+                    '<div class="upload-progress-bar-wrap"><div class="upload-progress-bar" id="bar-' + safeId + '"></div></div>' +
+                    '<span id="st-' + safeId + '">...</span>';
+                list.appendChild(row);
+
+                const bar = document.getElementById('bar-' + safeId);
+                const st  = document.getElementById('st-' + safeId);
+
+                try {
+                    const fd = new FormData();
+                    fd.append('source_image', file);
+                    if (bar) bar.style.width = '30%';
+                    const resp = await fetch('/images/upload-ajax', { method: 'POST', body: fd });
+                    if (bar) bar.style.width = '100%';
+                    const json = await resp.json();
+                    if (json.ok) {
+                        if (st) { st.className = 'upload-status-ok'; st.textContent = '✅'; }
+                        anyOk = true;
+                    } else {
+                        if (st) { st.className = 'upload-status-err'; st.textContent = '❌ ' + (json.error || 'Помилка'); }
+                    }
+                } catch(err) {
+                    if (bar) bar.style.width = '100%';
+                    if (st) { st.className = 'upload-status-err'; st.textContent = '❌ Помилка'; }
+                }
+            }
+
+            if (anyOk) setTimeout(() => location.reload(), 900);
         }
     </script>
 </body>
