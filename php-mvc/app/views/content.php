@@ -160,10 +160,10 @@
         }
         .cs-video-box video { width: 100%; height: 100%; object-fit: contain; }
 
-        .cs-slides-strip { display: flex; gap: 8px; flex-wrap: wrap; max-width: 580px; }
+        .cs-slides-strip { display: flex; gap: 12px; flex-wrap: wrap; max-width: 980px; }
         .cs-slides-strip img {
-            width: 160px; height: auto; max-height: 285px; object-fit: cover;
-            border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            width: 320px; height: auto; max-height: 570px; object-fit: cover;
+            border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
         .cs-result-actions { display: flex; gap: 8px; width: 270px; flex-wrap: wrap; }
@@ -221,7 +221,7 @@
             padding: 16px; text-align: center; margin-bottom: 16px;
             background: #f9fafb; cursor: pointer; transition: border-color 0.15s;
         }
-        .pg-upload-zone:hover { border-color: #3b82f6; background: #eff6ff; }
+        .pg-upload-zone:hover, .pg-upload-zone.drag-over { border-color: #3b82f6; background: #eff6ff; }
         .pg-upload-zone input { display: none; }
         .pg-upload-label {
             display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -284,12 +284,12 @@
             <button class="pg-close-btn" onclick="closeGallery()">✕</button>
         </div>
         <div class="pg-body">
-            <div class="pg-upload-zone" onclick="document.getElementById('pg-file-input').click()">
+            <div class="pg-upload-zone" id="pg-upload-zone" onclick="document.getElementById('pg-file-input').click()" ondragover="pgDragOver(event)" ondragleave="pgDragLeave(event)" ondrop="pgDrop(event)">
                 <label class="pg-upload-label">
-                    <span>📤</span> Завантажити нове фото
+                    <span>📤</span> Завантажити фото (або перетягни сюди)
                 </label>
                 <div class="pg-upload-progress" id="pg-upload-status"></div>
-                <input type="file" id="pg-file-input" accept="image/*" onchange="pgUploadFile(this)">
+                <input type="file" id="pg-file-input" accept="image/*" multiple onchange="pgUploadFile(this)">
             </div>
             <div id="pg-grid" class="pg-grid">
                 <div class="pg-empty">Завантажую галерею...</div>
@@ -309,12 +309,12 @@
 
     <div class="cs-format-tabs">
         <button class="cs-tab active" data-filter="all">Всі</button>
-        <button class="cs-tab" data-filter="img">🖼 Зображення</button>
-        <button class="cs-tab" data-filter="reel">🎬 Рілс / Відео</button>
+        <button class="cs-tab" data-filter="img">🖼 Галерея</button>
+        <button class="cs-tab" data-filter="reel">🎬 Типи контенту</button>
     </div>
 
     <!-- ══ IMAGES ══ -->
-    <div class="cs-section-label" data-cat="img">🖼 Зображення</div>
+    <div class="cs-section-label" data-cat="img">🖼 Галерея</div>
     <table class="cs-table" data-cat="img">
         <thead>
             <tr>
@@ -359,6 +359,7 @@
                                         <div class="cs-photo-thumb" id="photo-thumb-silhouette-story" onclick="openGallery('silhouette-story')">📷</div>
                                         <div class="cs-photo-pick-btns">
                                             <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('silhouette-story')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('silhouette-story')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
                                             <span class="cs-pick-url-toggle" onclick="toggleUrlInput('silhouette-story')">або вставити URL вручну</span>
                                             <input type="url" class="cs-photo-url-input" id="silhouette-story-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('silhouette-story',this.value)">
                                         </div>
@@ -449,6 +450,7 @@
                                         <div class="cs-photo-thumb" id="photo-thumb-silhouette-post" onclick="openGallery('silhouette-post')">📷</div>
                                         <div class="cs-photo-pick-btns">
                                             <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('silhouette-post')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('silhouette-post')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
                                             <span class="cs-pick-url-toggle" onclick="toggleUrlInput('silhouette-post')">або вставити URL вручну</span>
                                             <input type="url" class="cs-photo-url-input" id="silhouette-post-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('silhouette-post',this.value)">
                                         </div>
@@ -539,13 +541,14 @@
                                         <div class="cs-photo-thumb" id="photo-thumb-carousel" onclick="openGallery('carousel')">📷</div>
                                         <div class="cs-photo-pick-btns">
                                             <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('carousel')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('carousel')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
                                             <span class="cs-pick-url-toggle" onclick="toggleUrlInput('carousel')">або вставити URL вручну</span>
                                             <input type="url" class="cs-photo-url-input" id="carousel-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('carousel',this.value)">
                                         </div>
                                     </div>
                                     <input type="hidden" id="carousel-photoUrl" value="">
                                 </div>
-                                <div class="cs-field"><label>@нік бренду</label><input type="text" id="carousel-brandHandle" value="@fineko.space" placeholder="@brand"></div>
+                                
                                 <div class="cs-field">
                                     <label>Слайди (по одному на рядок: Заголовок | Підзаголовок)</label>
                                     <textarea rows="5" id="carousel-slides">Cashflow — основа фінансів | Знай куди йдуть гроші
@@ -652,6 +655,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
                                         <div class="cs-photo-thumb" id="photo-thumb-photo-text" onclick="openGallery('photo-text')">📷</div>
                                         <div class="cs-photo-pick-btns">
                                             <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('photo-text')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('photo-text')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
                                             <span class="cs-pick-url-toggle" onclick="toggleUrlInput('photo-text')">або вставити URL вручну</span>
                                             <input type="url" class="cs-photo-url-input" id="photo-text-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('photo-text',this.value)">
                                         </div>
@@ -729,7 +733,8 @@ P&L — реальний прибуток | Не оборот, а чистий �
                                     <div class="cs-photo-pick">
                                         <div class="cs-photo-thumb" id="photo-thumb-promo" onclick="openGallery('promo')">&#x1F4F7;</div>
                                         <div class="cs-photo-pick-btns">
-                                            <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('promo')">&#x1F4C2; &#x412;&#x438;&#x431;&#x440;&#x430;&#x442;&#x438; &#x437; &#x433;&#x430;&#x43B;&#x435;&#x440;&#x435;&#x457;</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="openGallery('promo')">📂 Вибрати з галереї</button>
+                                            <button type="button" class="cs-pick-gallery-btn" onclick="pickRandomPhoto('promo')" style="background:#f0fdf4;color:#166534;border-color:#bbf7d0">🎲 Рандомне фото</button>
                                             <span class="cs-pick-url-toggle" onclick="toggleUrlInput('promo')">&#x430;&#x431;&#x43E; &#x432;&#x441;&#x442;&#x430;&#x432;&#x438;&#x442;&#x438; URL</span>
                                             <input type="url" class="cs-photo-url-input" id="promo-photoUrl-url" placeholder="https://..." oninput="setPhotoFromUrl('promo',this.value)">
                                         </div>
@@ -767,7 +772,7 @@ P&L — реальний прибуток | Не оборот, а чистий �
     </table>
 
     <!-- ══ VIDEO ══ -->
-    <div class="cs-section-label" data-cat="reel">🎬 Рілс / Відео</div>
+    <div class="cs-section-label" data-cat="reel">🎬 Типи контенту</div>
     <table class="cs-table" data-cat="reel">
         <thead>
             <tr>
@@ -1116,36 +1121,56 @@ function setPhotoFromUrl(prefix, url) {
 }
 
 // ── Upload in gallery modal ──
+function pgDragOver(e) { e.preventDefault(); document.getElementById('pg-upload-zone').classList.add('drag-over'); }
+function pgDragLeave(e) { document.getElementById('pg-upload-zone').classList.remove('drag-over'); }
+function pgDrop(e) {
+    e.preventDefault();
+    document.getElementById('pg-upload-zone').classList.remove('drag-over');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    if (files.length) pgUploadFiles(files);
+}
+
 async function pgUploadFile(input) {
-    const file = input.files[0];
-    if (!file) return;
+    const files = [...input.files];
+    if (!files.length) return;
+    await pgUploadFiles(files);
+    input.value = '';
+}
+
+async function pgUploadFiles(files) {
     const status = document.getElementById('pg-upload-status');
     status.style.display = 'block';
-    status.textContent = 'Завантаження...';
-
-    const formData = new FormData();
-    formData.append('source_image', file);
-
-    try {
-        const resp = await fetch('/images/upload-ajax', {
-            method: 'POST',
-            body: formData,
-        });
-        const json = await resp.json();
-        if (json.ok) {
-            status.textContent = '✅ Завантажено: ' + json.filename;
-            _galleryImages = null; // invalidate cache
-            await loadGallery(true);
-            // auto-select the newly uploaded image
-            const newItem = document.querySelector('.pg-img-item');
-            if (newItem) newItem.click();
-        } else {
-            status.textContent = '❌ Помилка: ' + (json.error || 'невідома');
-        }
-    } catch (e) {
-        status.textContent = '❌ Помилка завантаження';
+    let done = 0, failed = 0;
+    for (const file of files) {
+        status.textContent = `Завантаження ${done + 1}/${files.length}...`;
+        const formData = new FormData();
+        formData.append('source_image', file);
+        try {
+            const resp = await fetch('/images/upload-ajax', { method: 'POST', body: formData });
+            const json = await resp.json();
+            if (json.ok) done++; else failed++;
+        } catch (e) { failed++; }
     }
-    input.value = '';
+    _galleryImages = null;
+    await loadGallery(true);
+    status.textContent = failed
+        ? `✅ ${done} завантажено, ❌ ${failed} помилок`
+        : `✅ ${done} фото завантажено`;
+    if (done > 0) {
+        const newItem = document.querySelector('.pg-img-item');
+        if (newItem) newItem.click();
+    }
+}
+
+async function pickRandomPhoto(prefix) {
+    if (!_galleryImages) {
+        const resp = await fetch('/api/source-images');
+        _galleryImages = await resp.json();
+    }
+    if (!_galleryImages || !_galleryImages.length) return;
+    const img = _galleryImages[Math.floor(Math.random() * _galleryImages.length)];
+    const url = window.location.origin + img.url;
+    setPhotoForPrefix(prefix, url);
 }
 
 // ── Generate via Funnel ──
