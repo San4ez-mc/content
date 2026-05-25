@@ -1,5 +1,6 @@
 <?php
 // public/index.php
+session_start();
 $config = require __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../app/core/Database.php';
 
@@ -178,10 +179,34 @@ if ($uri === '' || $uri === 'home') {
     require_once __DIR__ . '/../app/controllers/SettingsController.php';
     $controller = new SettingsController($db);
     $controller->save();
+} elseif ($uri === 'content' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/ContentController.php';
+    $controller = new ContentController($db);
+    $controller->index();
+} elseif ($uri === 'api/content-generate' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/ContentApiController.php';
+    $controller = new ContentApiController($db);
+    $controller->generate();
+} elseif ($uri === 'api/content-callback' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/ContentApiController.php';
+    $controller = new ContentApiController($db);
+    $controller->callback();
+} elseif ($uri === 'api/content-status' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/ContentApiController.php';
+    $controller = new ContentApiController($db);
+    $controller->status();
+} elseif ($uri === 'api/source-images' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/ImagesController.php';
+    $controller = new ImagesController($db);
+    $controller->listSourceImages();
 } elseif ($uri === 'images' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     require_once __DIR__ . '/../app/controllers/ImagesController.php';
     $controller = new ImagesController($db);
     $controller->index();
+} elseif ($uri === 'images/upload-ajax' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/ImagesController.php';
+    $controller = new ImagesController($db);
+    $controller->uploadSourceImageAjax();
 } elseif ($uri === 'images/upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once __DIR__ . '/../app/controllers/ImagesController.php';
     $controller = new ImagesController($db);

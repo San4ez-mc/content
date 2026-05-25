@@ -6,7 +6,7 @@ class AuthController
     public function __construct($db)
     {
         $this->db = $db;
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
     }
     public function loginForm()
     {
@@ -35,7 +35,7 @@ class AuthController
     }
     public static function check()
     {
-        session_start();
+        if (session_status() === PHP_SESSION_NONE) session_start();
         if (empty($_SESSION['admin_id'])) {
             header('Location: /login');
             exit;

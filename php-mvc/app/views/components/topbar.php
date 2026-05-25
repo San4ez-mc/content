@@ -5,6 +5,7 @@
         <a href="/?project_id=<?php echo $active_project_id; ?>">Контент план</a>
         <a href="/social-networks?project_id=<?php echo $active_project_id; ?>">Соц.мережі</a>
         <a href="/images?project_id=<?php echo $active_project_id; ?>">Зображення</a>
+        <a href="/content?project_id=<?php echo $active_project_id; ?>">🎬 Відео</a>
         <a href="/settings?project_id=<?php echo $active_project_id; ?>">Налаштування</a>
     </div>
     <div class="project-dropdown">

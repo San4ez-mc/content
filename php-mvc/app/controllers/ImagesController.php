@@ -561,6 +561,87 @@ class ImagesController extends BaseController
         return $data ?: null;
     }
 
+
+
+    // POST /images/upload-ajax — JSON response upload (for gallery modal)
+    public function uploadSourceImageAjax()
+    {
+        header('Content-Type: application/json');
+
+        require_once __DIR__ . '/AuthController.php';
+        AuthController::check();
+
+        if (!isset($_FILES['source_image']) || $_FILES['source_image']['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['ok' => false, 'error' => 'Файл не отримано']);
+            return;
+        }
+
+        $projectData = $this->ensureProjectSelected();
+        $active_project_id = $projectData['active_project_id'];
+        $file = $_FILES['source_image'];
+
+        if ($file['size'] > 10 * 1024 * 1024) {
+            echo json_encode(['ok' => false, 'error' => 'Файл більше 10MB']);
+            return;
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+            echo json_encode(['ok' => false, 'error' => 'Недозволений формат']);
+            return;
+        }
+
+        $uploadDir = $this->getProjectSourceDirectory($active_project_id, true);
+        $sourceFolderName = $this->getProjectSourceFolderName($active_project_id);
+        $filename = 'source_' . time() . '_' . uniqid() . '.' . $ext;
+        $filepath = $uploadDir . $filename;
+
+        if (move_uploaded_file($file['tmp_name'], $filepath)) {
+            echo json_encode([
+                'ok'       => true,
+                'filename' => $filename,
+                'url'      => '/uploads/source_images/' . rawurlencode($sourceFolderName) . '/' . rawurlencode($filename),
+            ]);
+        } else {
+            echo json_encode(['ok' => false, 'error' => 'Помилка збереження']);
+        }
+    }
+
+    // GET /api/source-images — returns JSON list of uploaded source images
+    public function listSourceImages()
+    {
+        header('Content-Type: application/json');
+        header('Cache-Control: no-cache');
+
+        require_once __DIR__ . '/AuthController.php';
+        AuthController::check();
+
+        $projectData = $this->ensureProjectSelected();
+        $active_project_id = $projectData['active_project_id'];
+        $sourceFolderName = $this->getProjectSourceFolderName($active_project_id);
+        $sourceDir = $this->getProjectSourceDirectory($active_project_id, true);
+
+        $images = [];
+        if (is_dir($sourceDir)) {
+            $files = scandir($sourceDir);
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..') continue;
+                $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) continue;
+                $filepath = $sourceDir . $file;
+                $images[] = [
+                    'filename' => $file,
+                    'url'      => '/uploads/source_images/' . rawurlencode($sourceFolderName) . '/' . rawurlencode($file),
+                    'size'     => filesize($filepath),
+                    'created'  => filemtime($filepath),
+                ];
+            }
+        }
+
+        usort($images, fn($a, $b) => $b['created'] - $a['created']);
+        echo json_encode($images);
+    }
+
     public function deleteSourceImage()
     {
         require_once __DIR__ . '/AuthController.php';
