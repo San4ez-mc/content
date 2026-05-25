@@ -160,10 +160,10 @@
         }
         .cs-video-box video { width: 100%; height: 100%; object-fit: contain; }
 
-        .cs-slides-strip { display: flex; gap: 6px; flex-wrap: wrap; max-width: 440px; }
+        .cs-slides-strip { display: flex; gap: 8px; flex-wrap: wrap; max-width: 580px; }
         .cs-slides-strip img {
-            width: 80px; height: 107px; object-fit: cover;
-            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            width: 160px; height: auto; max-height: 285px; object-fit: cover;
+            border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         .cs-result-actions { display: flex; gap: 8px; width: 270px; flex-wrap: wrap; }
@@ -378,6 +378,32 @@
                                         <option value="dark">Dark</option>
                                     </select>
                                 </div>
+                                <div class="cs-field">
+                                    <label>Колір фону</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="silhouette-story-bgColor" value="#0f172a" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('silhouette-story-bgColor-text').value=this.value">
+                                        <input type="text" id="silhouette-story-bgColor-text" value="#0f172a" style="flex:1;" oninput="syncColorText('silhouette-story-bgColor','silhouette-story-bgColor-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Акцентний колір</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="silhouette-story-accent" value="#3b82f6" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('silhouette-story-accent-text').value=this.value">
+                                        <input type="text" id="silhouette-story-accent-text" value="#3b82f6" style="flex:1;" oninput="syncColorText('silhouette-story-accent','silhouette-story-accent-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Стиль фону</label>
+                                    <select id="silhouette-story-bgStyle">
+                                        <option value="flat">Монохромний</option>
+                                        <option value="gradient">Градієнт (темний)</option>
+                                        <option value="radial">Радіальне сяйво</option>
+                                        <option value="mesh">Mesh-градієнт</option>
+                                        <option value="aurora">Аврора</option>
+                                        <option value="grid">Сітка</option>
+                                        <option value="dots">Крапки</option>
+                                    </select>
+                                </div>
                                 <button class="cs-gen-btn" id="btn-silhouette-story" onclick="generateViaFunnel('content-stories-generator',{width:1080,height:1920},'silhouette-story')">▶ Згенерувати</button>
                                 <div class="cs-error-box" id="err-silhouette-story"></div>
                             </div>
@@ -440,6 +466,32 @@
                                         <option value="minimal">Minimal</option>
                                         <option value="bold">Bold</option>
                                         <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Колір фону</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="silhouette-post-bgColor" value="#0f172a" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('silhouette-post-bgColor-text').value=this.value">
+                                        <input type="text" id="silhouette-post-bgColor-text" value="#0f172a" style="flex:1;" oninput="syncColorText('silhouette-post-bgColor','silhouette-post-bgColor-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Акцентний колір</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="silhouette-post-accent" value="#3b82f6" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('silhouette-post-accent-text').value=this.value">
+                                        <input type="text" id="silhouette-post-accent-text" value="#3b82f6" style="flex:1;" oninput="syncColorText('silhouette-post-accent','silhouette-post-accent-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Стиль фону</label>
+                                    <select id="silhouette-post-bgStyle">
+                                        <option value="flat">Монохромний</option>
+                                        <option value="gradient">Градієнт (темний)</option>
+                                        <option value="radial">Радіальне сяйво</option>
+                                        <option value="mesh">Mesh-градієнт</option>
+                                        <option value="aurora">Аврора</option>
+                                        <option value="grid">Сітка</option>
+                                        <option value="dots">Крапки</option>
                                     </select>
                                 </div>
                                 <button class="cs-gen-btn" id="btn-silhouette-post" onclick="generateViaFunnel('content-stories-generator',{width:1080,height:1350},'silhouette-post')">▶ Згенерувати</button>
@@ -552,6 +604,18 @@ P&L — реальний прибуток | Не оборот, а чистий �
                                         <input type="color" id="solid-text-accent" value="#00c48c" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('solid-text-accent-text').value=this.value">
                                         <input type="text" id="solid-text-accent-text" value="#00c48c" style="flex:1;" oninput="syncColorText('solid-text-accent','solid-text-accent-text')">
                                     </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Стиль фону</label>
+                                    <select id="solid-text-bgStyle">
+                                        <option value="flat">Монохромний</option>
+                                        <option value="gradient">Градієнт (темний)</option>
+                                        <option value="radial">Радіальне сяйво</option>
+                                        <option value="mesh">Mesh-градієнт</option>
+                                        <option value="aurora">Аврора</option>
+                                        <option value="grid">Сітка</option>
+                                        <option value="dots">Крапки</option>
+                                    </select>
                                 </div>
                                 <button class="cs-gen-btn" id="btn-solid-text" onclick="generateViaFunnel('content-image-template',{template:'solid-text',width:1080,height:1920},'solid-text')">▶ Згенерувати</button>
                                 <div class="cs-error-box" id="err-solid-text"></div>
@@ -1106,6 +1170,7 @@ async function generateViaFunnel(funnelSlug, extraParams, prefix) {
         badge:       document.getElementById(prefix + '-badge')?.value?.trim() || '',
         brandHandle: document.getElementById(prefix + '-brandHandle')?.value?.trim() || '',
         template:    document.getElementById(prefix + '-template')?.value || 'default',
+        bgStyle:     document.getElementById(prefix + '-bgStyle')?.value || 'flat',
         ...extraParams,
     };
 
