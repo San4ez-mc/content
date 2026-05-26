@@ -95,6 +95,22 @@ if ($uri === '' || $uri === 'home') {
     require_once __DIR__ . '/../app/controllers/HomeController.php';
     $controller = new HomeController($db);
     $controller->updatePostType();
+} elseif ($uri === 'forgot' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/ForgotController.php';
+    $controller = new ForgotController($db);
+    $controller->forgotForm();
+} elseif ($uri === 'forgot' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/ForgotController.php';
+    $controller = new ForgotController($db);
+    $controller->forgot();
+} elseif ($uri === 'reset-password' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/ForgotController.php';
+    $controller = new ForgotController($db);
+    $controller->resetForm();
+} elseif ($uri === 'reset-password' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/ForgotController.php';
+    $controller = new ForgotController($db);
+    $controller->reset();
 } elseif ($uri === 'login' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     require_once __DIR__ . '/../app/controllers/AuthController.php';
     $controller = new AuthController($db);

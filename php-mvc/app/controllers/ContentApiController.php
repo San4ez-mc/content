@@ -42,6 +42,7 @@ class ContentApiController extends BaseController
             'content-avatar-heygen',
             'content-avatar-budget',
             'content-image-template',
+            'content-ai-bg',
         ];
 
         if (!in_array($funnel, $allowedFunnels)) {

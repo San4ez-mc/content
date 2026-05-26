@@ -112,9 +112,9 @@
             <input type="password" name="password" placeholder="Пароль" required>
             <button type="submit">Увійти</button>
         </form>
-        <form method="post" action="/forgot">
-            <button type="submit" class="secondary">Відновити пароль</button>
-        </form>
+        <div style="text-align:center;margin-top:12px">
+            <a href="/forgot" style="color:#5a6c7d;font-size:13px;text-decoration:none;">Забув пароль?</a>
+        </div>
     </div>
 </body>
 

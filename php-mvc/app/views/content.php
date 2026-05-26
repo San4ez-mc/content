@@ -333,6 +333,69 @@
         <tbody>
 
             <!-- ══ СТОРІЗ ══ -->
+            <tr class="cs-block-header" data-filter="story"><td colspan="5">🤖 AI-генерація</td></tr>
+            <tr class="cs-data-row" data-filter="story" data-id="ai-bg">
+                <td><div class="cs-type-cell"><div class="cs-icon cs-icon-img">🎨</div><div><div class="cs-type-name">AI Фон + текст</div><div class="cs-type-desc">Fal.ai FLUX генерує фотореалістичний фон за промптом, потім накладаються текстові плашки. ~5-20 сек.</div><span class="cs-funnel-tag">&#128279; content-ai-bg</span></div></div></td>
+                <td><span class="cs-badge cs-badge-story">Сторіз</span></td>
+                <td style="font-size:13px;color:#374151;">9:16</td>
+                <td><span class="cs-status-ready"><span class="cs-status-dot dot-green"></span>Готово</span></td>
+                <td><button class="cs-launch-btn" onclick="toggleForm('ai-bg')">▶ Запустити</button></td>
+            </tr>
+            <tr class="cs-inline-row" id="form-ai-bg">
+                <td colspan="5">
+                    <div class="cs-inline-panel">
+                        <div class="cs-panel-header">
+                            <span style="font-size:20px">🎨</span>
+                            <span class="cs-panel-title">AI Фон + текст (Сторіз 9:16)</span>
+                            <button class="cs-close-btn" onclick="toggleForm('ai-bg')">✕</button>
+                        </div>
+                        <div class="cs-panel-inner">
+                            <div class="cs-panel-form">
+                                <div class="cs-field">
+                                    <label>Промпт для AI фону <span style="color:#ef4444">*</span></label>
+                                    <textarea rows="3" id="ai-bg-prompt" placeholder="cinematic dark office with holographic screens, dramatic blue lighting, 8k professional photography"></textarea>
+                                    <div class="cs-field-hint">Англійською працює краще. Уникай людей та обличчя.</div>
+                                </div>
+                                <div class="cs-field" style="margin-bottom:6px">
+                                    <label style="font-size:12px;color:#6b7280;margin-bottom:4px">Бистрі пресети:</label>
+                                    <div style="display:flex;flex-wrap:wrap;gap:6px">
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='cinematic dark modern office with holographic data screens, deep blue ambient lighting, bokeh background, ultra realistic 8k'">🏢 Офіс</button>
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='luxury penthouse rooftop at night, city skyline with glowing lights, dramatic purple and gold tones, cinematic photography'">🌆 Місто</button>
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='abstract dark background with glowing financial charts and graphs, neon blue and gold accents, 4k professional'">&#x1F4CA; Графіки</button>
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='minimalist dark studio with soft volumetric light rays, deep navy blue, luxury aesthetic, editorial photography'">✨ Студія</button>
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='futuristic tech environment with floating holographic interfaces, dark background, neon cyan and blue glow, 8k render'">🤖 Техно</button>
+                                        <button type="button" class="cs-pick-gallery-btn" style="font-size:12px" onclick="document.getElementById('ai-bg-prompt').value='foggy dark mountain landscape at dawn, dramatic light beams, cinematic, moody, editorial photography'">⛰️ Гори</button>
+                                    </div>
+                                </div>
+                                <div class="cs-field"><label>Заголовок (опційно)</label><textarea rows="2" id="ai-bg-title" placeholder="За одне заняття — повна фінансова система"></textarea></div>
+                                <div class="cs-field"><label>Підзаголовок (опційно)</label><input type="text" id="ai-bg-subtitle" placeholder="Cashflow · P&amp;L · Баланс"></div>
+                                <div class="cs-field"><label>Мітка/тег (опційно)</label><input type="text" id="ai-bg-extra" placeholder="&#x1F4CC; ЛАЙФХАК · ТОП-3"></div>
+                                <div class="cs-field">
+                                    <label>Колір плашок</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="ai-bg-bgColor" value="#0f172a" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('ai-bg-bgColor-text').value=this.value">
+                                        <input type="text" id="ai-bg-bgColor-text" value="#0f172a" style="flex:1;" oninput="syncColorText('ai-bg-bgColor','ai-bg-bgColor-text')">
+                                    </div>
+                                </div>
+                                <div class="cs-field">
+                                    <label>Акцентний колір</label>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <input type="color" id="ai-bg-accent" value="#3b82f6" style="width:48px;height:36px;border:1px solid #d1d5db;border-radius:8px;padding:2px;cursor:pointer;" oninput="document.getElementById('ai-bg-accent-text').value=this.value">
+                                        <input type="text" id="ai-bg-accent-text" value="#3b82f6" style="flex:1;" oninput="syncColorText('ai-bg-accent','ai-bg-accent-text')">
+                                    </div>
+                                </div>
+                                <button class="cs-gen-btn" id="btn-ai-bg" onclick="generateAiBg('ai-bg',1080,1920)">🎨 Згенерувати (AI)</button>
+                                <div class="cs-error-box" id="err-ai-bg"></div>
+                            </div>
+                            <div class="cs-panel-preview">
+                                <div id="preview-ai-bg">
+                                    <div class="cs-preview-placeholder"><span>🎨</span><span>Результат тут</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
             <tr class="cs-block-header" data-filter="story"><td colspan="5">🎭 Силует</td></tr>
 
             <!-- I-1: Силует + плашки, Сторіз -->
@@ -1694,6 +1757,47 @@ function copyUrl(url, btn) {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ── AI Фон + текст (Fal.ai FLUX) ──
+        async function generateAiBg(prefix, width, height) {
+            const prompt = document.getElementById(prefix + '-prompt')?.value?.trim();
+            if (!prompt) {
+                const errEl = document.getElementById('err-' + prefix);
+                if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Вкажіть промпт для AI фону'; }
+                return;
+            }
+            const btn = document.getElementById('btn-' + prefix);
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Генерація (~5-20 сек)...'; }
+            const errEl = document.getElementById('err-' + prefix);
+            if (errEl) errEl.style.display = 'none';
+
+            const params = {
+                prompt,
+                width,
+                height,
+                title:    document.getElementById(prefix + '-title')?.value?.trim() || '',
+                subtitle: document.getElementById(prefix + '-subtitle')?.value?.trim() || '',
+                extra:    document.getElementById(prefix + '-extra')?.value?.trim() || '',
+                bgColor:  document.getElementById(prefix + '-bgColor')?.value || '#0f172a',
+                accent:   document.getElementById(prefix + '-accent')?.value || '#3b82f6',
+                fgColor:  '#ffffff',
+            };
+
+            try {
+                const resp = await fetch('/api/content-generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ funnel: 'content-ai-bg', params })
+                });
+                const result = await resp.json();
+                if (!result.ok) throw new Error(result.error || 'Помилка');
+                showImageResult(result, prefix, 'content-ai-bg', params, width, height);
+            } catch (e) {
+                if (errEl) { errEl.style.display = 'block'; errEl.textContent = '❌ ' + e.message; }
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = '🎨 Згенерувати (AI)'; }
+            }
+        }
 </script>
 </body>
 </html>
