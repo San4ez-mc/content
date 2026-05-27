@@ -82,7 +82,7 @@ PHP;
             $mail->SMTPAuth   = true;
             $mail->Username   = $cfg['username'];
             $mail->Password   = $cfg['password'];
-            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = ($cfg['encryption'] ?? 'tls') === 'ssl' ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = $cfg['port'];
             $mail->CharSet    = 'UTF-8';
             $mail->setFrom($cfg['from'], $cfg['from_name']);

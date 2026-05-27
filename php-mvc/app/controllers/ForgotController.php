@@ -136,7 +136,7 @@ class ForgotController
             $mail->SMTPAuth   = true;
             $mail->Username   = $cfg['username'];
             $mail->Password   = $cfg['password'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = ($cfg['encryption'] ?? 'tls') === 'ssl' ? PHPMailer::ENCRYPTION_SMTPS : PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = $cfg['port'];
             $mail->CharSet    = 'UTF-8';
 

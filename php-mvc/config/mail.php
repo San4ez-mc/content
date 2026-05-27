@@ -1,13 +1,11 @@
 <?php
 // config/mail.php
-// Gmail SMTP settings
-// To get App Password: Google Account → Security → 2-Step Verification → App passwords
-// Create app: Mail + Other → copy 16-char password here
 return [
-    'host'     => 'smtp.gmail.com',
-    'port'     => 587,
-    'username' => 'olexandrmasuk@gmail.com',
-    'password' => '',           // ← вставити Gmail App Password (16 символів без пробілів)
-    'from'     => 'olexandrmasuk@gmail.com',
-    'from_name'=> 'Content Planner',
+    'host'      => 'mail.adm.tools',
+    'port'      => 465,
+    'username'  => 'content@fineko.space',
+    'password'  => 'eI3vjP2wfE2aoN5ruN2d',
+    'from'      => 'content@fineko.space',
+    'from_name' => 'Content Planner',
+    'encryption'=> 'ssl',
 ];
