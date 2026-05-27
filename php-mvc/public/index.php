@@ -187,6 +187,18 @@ if ($uri === '' || $uri === 'home') {
     require_once __DIR__ . '/../app/controllers/SocialNetworkController.php';
     $controller = new SocialNetworkController($db);
     $controller->deleteNetwork();
+} elseif ($uri === 'settings/mail' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/MailSettingsController.php';
+    $controller = new MailSettingsController($db);
+    $controller->form();
+} elseif ($uri === 'settings/mail-save' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/MailSettingsController.php';
+    $controller = new MailSettingsController($db);
+    $controller->save();
+} elseif ($uri === 'settings/mail-test' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/MailSettingsController.php';
+    $controller = new MailSettingsController($db);
+    $controller->test();
 } elseif ($uri === 'settings' && $_SERVER['REQUEST_METHOD'] === 'GET') {
     require_once __DIR__ . '/../app/controllers/SettingsController.php';
     $controller = new SettingsController($db);
