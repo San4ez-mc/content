@@ -249,6 +249,16 @@
             word-break: break-word;
         }
 
+        .generation-meta.error {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .generation-meta.success {
+            color: #166534;
+            font-weight: 600;
+        }
+
         .bulk-generation-bar {
             display: flex;
             flex-wrap: wrap;
@@ -1214,10 +1224,17 @@
                     }
                 }
                 if (meta) {
+                    meta.classList.remove('error', 'success');
                     if (metaTextOrUrl && isUrl) {
                         meta.innerHTML = '<a href="' + metaTextOrUrl.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer">Відкрити згенероване медіа</a>';
+                        meta.classList.add('success');
                     } else {
                         meta.textContent = metaTextOrUrl || (statusRaw === 'failed' ? 'Помилка генерації' : 'Немає активної генерації.');
+                        if (statusRaw === 'failed') {
+                            meta.classList.add('error');
+                        } else if (metaTextOrUrl) {
+                            meta.classList.add('success');
+                        }
                     }
                 }
             }
@@ -1252,16 +1269,23 @@
                 formData.append('avatar_engine', avatarEngine || '');
                 paintGenerationStatus(postId, 'queued', 'Відправляю запит у Flow...');
                 return fetch('/generation/run', { method: 'POST', body: formData })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (!data || !data.ok) {
-                            throw new Error((data && data.error) ? data.error : 'generation_start_failed');
+                    .then(async response => {
+                        const text = await response.text();
+                        let data;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (error) {
+                            data = null;
+                        }
+                        if (!response.ok || !data || !data.ok) {
+                            const errorMessage = (data && data.error) ? data.error : (data && data.message) ? data.message : ('HTTP ' + response.status + ' ' + response.statusText);
+                            throw new Error(errorMessage || 'generation_start_failed');
                         }
                         paintGenerationStatus(postId, data.status || 'processing', 'Запит прийнято. Очікуємо результат від Flow.');
                         return data;
                     })
                     .catch(e => {
-                        paintGenerationStatus(postId, 'failed', e.message || 'Помилка запуску');
+                        paintGenerationStatus(postId, 'failed', e.message || 'Помилка запуску', false);
                         throw e;
                     });
             }
@@ -1374,9 +1398,19 @@
                     if (!postId || !['queued', 'processing'].includes(rawStatus)) return;
 
                     fetch('/generation/status?post_id=' + encodeURIComponent(postId), { method: 'GET' })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (!data || !data.ok) return;
+                        .then(async response => {
+                            const text = await response.text();
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (error) {
+                                data = null;
+                            }
+                            if (!response.ok || !data || !data.ok) {
+                                const errorMessage = (data && data.error) ? data.error : (data && data.message) ? data.message : ('HTTP ' + response.status + ' ' + response.statusText);
+                                paintGenerationStatus(postId, 'failed', errorMessage, false);
+                                return;
+                            }
                             const status = data.generation_status || 'not_generated';
                             const outputUrl = data.generation_output_url || '';
                             const errorText = data.generation_error || '';
@@ -1385,10 +1419,12 @@
                             } else if (errorText) {
                                 paintGenerationStatus(postId, status, errorText, false);
                             } else {
-                                paintGenerationStatus(postId, status, status === 'processing' ? 'Виконується у Flow...' : '');
+                                paintGenerationStatus(postId, status, status === 'processing' ? 'Виконується у Flow...' : 'Немає активної генерації.', false);
                             }
                         })
-                        .catch(() => { });
+                        .catch(error => {
+                            paintGenerationStatus(postId, 'failed', error.message || 'Помилка зворотнього виклику', false);
+                        });
                 });
             }
 
