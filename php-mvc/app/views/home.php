@@ -32,7 +32,7 @@
         .table-wrapper {
             overflow-x: auto;
             overflow-y: visible;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 140px);
             position: relative;
             border: 1px solid #e5e5e5;
             border-radius: 8px;
@@ -277,7 +277,7 @@
     <?php require __DIR__ . '/components/topbar.php'; ?>
 
     <div class="container">
-        <div style="background:white;border-radius:10px;padding:12px 28px 28px 28px;box-shadow:var(--shadow);">
+        <div style="background:white;border-radius:10px;padding:8px 16px 12px 16px;box-shadow:var(--shadow);">
             <div class="content-planner-header">
                 <div>
                     <h2 style="margin:0;">📅 План контенту</h2>
@@ -319,10 +319,11 @@
                     }
                 }
                 ?>
-                <!-- Фільтр видимих колонок мереж -->
+                <!-- Компактний тулбар: мережі + масова генерація в одному рядку -->
+                <div class="cp-toolbar" style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:8px;">
                 <div id="network-filter"
-                    style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:10px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-                    <span style="font-size:13px;color:#475569;font-weight:600;">📱 Показати:</span>
+                    style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+                    <span style="font-size:12px;color:#475569;font-weight:600;">📱 Показати (макс 2):</span>
                     <?php foreach ($enabledNetworks as $network): ?>
                         <label
                             style="display:flex;align-items:center;gap:5px;font-size:13px;color:#334155;cursor:pointer;user-select:none;">
@@ -334,7 +335,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <div class="bulk-generation-bar">
+                <div class="bulk-generation-bar" style="margin:0;padding:6px 12px;">
                     <span style="font-size:12px;color:#334155;font-weight:600;">⚡ Масова генерація:</span>
                     <button type="button" class="mini-btn add" id="bulk-generate-selected">Згенерувати для вибраних (<span
                             id="bulk-selected-count">0</span>)</button>
@@ -343,6 +344,7 @@
                     <button type="button" class="mini-btn add" id="bulk-generate-day">Згенерувати весь день</button>
                     <span id="bulk-generation-status" class="muted"></span>
                 </div>
+                </div><!-- /cp-toolbar -->
 
                 <div class="table-wrapper">
                     <table class="content-table">
@@ -1440,26 +1442,54 @@
                 });
             }
 
+            // Максимум 2 соц.мережі одночасно — менше горизонтального скролу, фокус.
+            const MAX_NETWORKS = 2;
+            const getNetCbs = () => Array.from(document.querySelectorAll('.network-vis-cb'));
+
+            function persistNetVis() {
+                const stored = {};
+                getNetCbs().forEach(function (cb) {
+                    stored[cb.getAttribute('data-filter-network-id')] = cb.checked;
+                });
+                localStorage.setItem(VIS_STORAGE_KEY, JSON.stringify(stored));
+            }
+
             function applyNetworkVisibility() {
                 let stored = {};
                 try { stored = JSON.parse(localStorage.getItem(VIS_STORAGE_KEY) || '{}'); } catch (e) { }
-                document.querySelectorAll('.network-vis-cb').forEach(function (cb) {
+                const cbs = getNetCbs();
+                let visibleIds = cbs
+                    .map(function (cb) { return cb.getAttribute('data-filter-network-id'); })
+                    .filter(function (nid) { return stored[nid] === true; });
+                if (visibleIds.length === 0) {
+                    // дефолт — перші дві мережі
+                    visibleIds = cbs.slice(0, MAX_NETWORKS).map(function (cb) { return cb.getAttribute('data-filter-network-id'); });
+                }
+                visibleIds = visibleIds.slice(0, MAX_NETWORKS);
+                const visSet = new Set(visibleIds);
+                cbs.forEach(function (cb) {
                     const nid = cb.getAttribute('data-filter-network-id');
-                    const visible = stored[nid] !== false; // default: true
-                    cb.checked = visible;
-                    setNetworkColsVisible(nid, visible);
+                    const v = visSet.has(nid);
+                    cb.checked = v;
+                    setNetworkColsVisible(nid, v);
                 });
+                persistNetVis();
             }
 
-            document.querySelectorAll('.network-vis-cb').forEach(function (cb) {
+            getNetCbs().forEach(function (cb) {
                 cb.addEventListener('change', function () {
-                    const nid = this.getAttribute('data-filter-network-id');
-                    const visible = this.checked;
-                    setNetworkColsVisible(nid, visible);
-                    let stored = {};
-                    try { stored = JSON.parse(localStorage.getItem(VIS_STORAGE_KEY) || '{}'); } catch (e) { }
-                    stored[nid] = visible;
-                    localStorage.setItem(VIS_STORAGE_KEY, JSON.stringify(stored));
+                    if (this.checked) {
+                        const checked = getNetCbs().filter(function (x) { return x.checked; });
+                        if (checked.length > MAX_NETWORKS) {
+                            const oldest = checked.find(function (x) { return x !== cb; });
+                            if (oldest) {
+                                oldest.checked = false;
+                                setNetworkColsVisible(oldest.getAttribute('data-filter-network-id'), false);
+                            }
+                        }
+                    }
+                    setNetworkColsVisible(this.getAttribute('data-filter-network-id'), this.checked);
+                    persistNetVis();
                 });
             });
 
