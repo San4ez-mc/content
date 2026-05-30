@@ -249,6 +249,10 @@
         .ct-legend { display:flex; gap:14px; align-items:center; font-size:11px; color:#64748b; margin:2px 0 8px; flex-wrap:wrap; }
         .ct-legend .dot { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:middle; }
 
+        /* Згортання другорядних полів (аватар) — прибирає «стіну порожніх полів» */
+        .category-meta-extra { display:none; }
+        body.details-on .category-meta-extra { display:block; }
+
         .generation-meta {
             font-size: 11px;
             color: #64748b;
@@ -351,6 +355,10 @@
                     <button type="button" class="mini-btn add" id="bulk-generate-day">Згенерувати весь день</button>
                     <span id="bulk-generation-status" class="muted"></span>
                 </div>
+                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;cursor:pointer;user-select:none;">
+                    <input type="checkbox" id="toggle-details" style="cursor:pointer;width:15px;height:15px;accent-color:#5a6c7d;">
+                    🔎 Деталі аватара
+                </label>
                 </div><!-- /cp-toolbar -->
 
                 <div class="ct-legend">
@@ -473,13 +481,15 @@
                                                                 </option>
                                                             <?php endforeach; ?>
                                                         </select>
-                                                        <input type="text" name="avatar_name" class="category-meta-input"
-                                                            list="contentPlanAvatarSuggestions"
-                                                            value="<?php echo htmlspecialchars((string) ($selectedCategory['avatar_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
-                                                            placeholder="Аватар (напр. Віктор)" <?php echo $selectedCategory ? '' : 'disabled'; ?>>
-                                                        <input type="text" name="avatar_description" class="category-meta-input"
-                                                            value="<?php echo htmlspecialchars((string) ($selectedCategory['avatar_description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
-                                                            placeholder="Короткий опис аватара" <?php echo $selectedCategory ? '' : 'disabled'; ?>>
+                                                        <div class="category-meta-extra">
+                                                            <input type="text" name="avatar_name" class="category-meta-input"
+                                                                list="contentPlanAvatarSuggestions"
+                                                                value="<?php echo htmlspecialchars((string) ($selectedCategory['avatar_name'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
+                                                                placeholder="Аватар (напр. Віктор)" <?php echo $selectedCategory ? '' : 'disabled'; ?>>
+                                                            <input type="text" name="avatar_description" class="category-meta-input"
+                                                                value="<?php echo htmlspecialchars((string) ($selectedCategory['avatar_description'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"
+                                                                placeholder="Короткий опис аватара" <?php echo $selectedCategory ? '' : 'disabled'; ?>>
+                                                        </div>
                                                         <div class="category-meta-status muted"></div>
                                                     </form>
                                                 </td>
@@ -1530,6 +1540,20 @@
             });
 
             applyNetworkVisibility();
+
+            // Перемикач «Деталі аватара» — ховає другорядні поля за замовчуванням
+            (function () {
+                const KEY = 'cp_details_on';
+                const cb = document.getElementById('toggle-details');
+                if (!cb) return;
+                const on = localStorage.getItem(KEY) === '1';
+                cb.checked = on;
+                document.body.classList.toggle('details-on', on);
+                cb.addEventListener('change', function () {
+                    document.body.classList.toggle('details-on', cb.checked);
+                    localStorage.setItem(KEY, cb.checked ? '1' : '0');
+                });
+            })();
         });
     </script>
 </body>
