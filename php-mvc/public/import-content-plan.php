@@ -98,10 +98,15 @@ foreach ($posts as $post) {
         continue;
     }
 
+    $slides   = isset($post['slides']) && is_array($post['slides']) ? json_encode($post['slides'], JSON_UNESCAPED_UNICODE) : null;
+    $audience = isset($post['audience']) ? substr((string)$post['audience'], 0, 20) : null;
+    $threadPart = isset($post['threadPart']) ? (int)$post['threadPart'] : null;
+    $postType = isset($post['post_type']) ? substr((string)$post['post_type'], 0, 50) : null;
+
     try {
         $db->query(
-            'INSERT INTO posts (project_id, post_date, social_network_id, text) VALUES (?, ?, ?, ?)',
-            [$projectId, $date, $snId, $text]
+            'INSERT INTO posts (project_id, post_date, social_network_id, text, slides, audience, thread_part, post_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [$projectId, $date, $snId, $text, $slides, $audience, $threadPart, $postType]
         );
         $inserted++;
     } catch (Exception $e) {

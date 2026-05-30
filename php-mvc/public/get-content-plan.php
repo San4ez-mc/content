@@ -52,19 +52,24 @@ if (!empty($_GET['date_from'])) { $where .= ' AND post_date >= ?'; $params[] = $
 if (!empty($_GET['date_to']))   { $where .= ' AND post_date <= ?'; $params[] = $_GET['date_to']; }
 
 $rows = $db->query(
-    "SELECT id, post_date, social_network_id, text FROM posts WHERE $where ORDER BY post_date ASC, id ASC LIMIT 300",
+    "SELECT id, post_date, social_network_id, text, slides, audience, thread_part, post_type FROM posts WHERE $where ORDER BY post_date ASC, id ASC LIMIT 300",
     $params
 )->fetchAll(PDO::FETCH_ASSOC);
 
 $posts = [];
 foreach ($rows as $r) {
-    $posts[] = [
+    $entry = [
         'id'       => (string) $r['id'],
         'date'     => $r['post_date'],
         'platform' => platKey($snById[(int) $r['social_network_id']] ?? ''),
         'content'  => (string) $r['text'],
         'status'   => 'scheduled',
     ];
+    if ($r['slides'])     $entry['slides']     = json_decode($r['slides'], true);
+    if ($r['audience'])   $entry['audience']   = $r['audience'];
+    if ($r['thread_part']) $entry['threadPart'] = (int)$r['thread_part'];
+    if ($r['post_type'])  $entry['post_type']  = $r['post_type'];
+    $posts[] = $entry;
 }
 
 echo json_encode(['ok' => true, 'count' => count($posts), 'posts' => $posts]);
