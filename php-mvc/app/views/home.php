@@ -32,7 +32,7 @@
         .table-wrapper {
             overflow-x: auto;
             overflow-y: visible;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 140px);
             position: relative;
             border: 1px solid #e5e5e5;
             border-radius: 8px;
@@ -249,6 +249,16 @@
             word-break: break-word;
         }
 
+        .generation-meta.error {
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .generation-meta.success {
+            color: #166534;
+            font-weight: 600;
+        }
+
         .bulk-generation-bar {
             display: flex;
             flex-wrap: wrap;
@@ -267,7 +277,7 @@
     <?php require __DIR__ . '/components/topbar.php'; ?>
 
     <div class="container">
-        <div style="background:white;border-radius:10px;padding:12px 28px 28px 28px;box-shadow:var(--shadow);">
+        <div style="background:white;border-radius:10px;padding:8px 16px 12px 16px;box-shadow:var(--shadow);">
             <div class="content-planner-header">
                 <div>
                     <h2 style="margin:0;">📅 План контенту</h2>
@@ -309,10 +319,11 @@
                     }
                 }
                 ?>
-                <!-- Фільтр видимих колонок мереж -->
+                <!-- Компактний тулбар: мережі + масова генерація в одному рядку -->
+                <div class="cp-toolbar" style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:8px;">
                 <div id="network-filter"
-                    style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:10px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-                    <span style="font-size:13px;color:#475569;font-weight:600;">📱 Показати:</span>
+                    style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+                    <span style="font-size:12px;color:#475569;font-weight:600;">📱 Показати (макс 2):</span>
                     <?php foreach ($enabledNetworks as $network): ?>
                         <label
                             style="display:flex;align-items:center;gap:5px;font-size:13px;color:#334155;cursor:pointer;user-select:none;">
@@ -324,7 +335,7 @@
                     <?php endforeach; ?>
                 </div>
 
-                <div class="bulk-generation-bar">
+                <div class="bulk-generation-bar" style="margin:0;padding:6px 12px;">
                     <span style="font-size:12px;color:#334155;font-weight:600;">⚡ Масова генерація:</span>
                     <button type="button" class="mini-btn add" id="bulk-generate-selected">Згенерувати для вибраних (<span
                             id="bulk-selected-count">0</span>)</button>
@@ -333,6 +344,7 @@
                     <button type="button" class="mini-btn add" id="bulk-generate-day">Згенерувати весь день</button>
                     <span id="bulk-generation-status" class="muted"></span>
                 </div>
+                </div><!-- /cp-toolbar -->
 
                 <div class="table-wrapper">
                     <table class="content-table">
@@ -1214,10 +1226,17 @@
                     }
                 }
                 if (meta) {
+                    meta.classList.remove('error', 'success');
                     if (metaTextOrUrl && isUrl) {
                         meta.innerHTML = '<a href="' + metaTextOrUrl.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener noreferrer">Відкрити згенероване медіа</a>';
+                        meta.classList.add('success');
                     } else {
                         meta.textContent = metaTextOrUrl || (statusRaw === 'failed' ? 'Помилка генерації' : 'Немає активної генерації.');
+                        if (statusRaw === 'failed') {
+                            meta.classList.add('error');
+                        } else if (metaTextOrUrl) {
+                            meta.classList.add('success');
+                        }
                     }
                 }
             }
@@ -1252,16 +1271,23 @@
                 formData.append('avatar_engine', avatarEngine || '');
                 paintGenerationStatus(postId, 'queued', 'Відправляю запит у Flow...');
                 return fetch('/generation/run', { method: 'POST', body: formData })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (!data || !data.ok) {
-                            throw new Error((data && data.error) ? data.error : 'generation_start_failed');
+                    .then(async response => {
+                        const text = await response.text();
+                        let data;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (error) {
+                            data = null;
+                        }
+                        if (!response.ok || !data || !data.ok) {
+                            const errorMessage = (data && data.error) ? data.error : (data && data.message) ? data.message : ('HTTP ' + response.status + ' ' + response.statusText);
+                            throw new Error(errorMessage || 'generation_start_failed');
                         }
                         paintGenerationStatus(postId, data.status || 'processing', 'Запит прийнято. Очікуємо результат від Flow.');
                         return data;
                     })
                     .catch(e => {
-                        paintGenerationStatus(postId, 'failed', e.message || 'Помилка запуску');
+                        paintGenerationStatus(postId, 'failed', e.message || 'Помилка запуску', false);
                         throw e;
                     });
             }
@@ -1374,9 +1400,19 @@
                     if (!postId || !['queued', 'processing'].includes(rawStatus)) return;
 
                     fetch('/generation/status?post_id=' + encodeURIComponent(postId), { method: 'GET' })
-                        .then(r => r.json())
-                        .then(data => {
-                            if (!data || !data.ok) return;
+                        .then(async response => {
+                            const text = await response.text();
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (error) {
+                                data = null;
+                            }
+                            if (!response.ok || !data || !data.ok) {
+                                const errorMessage = (data && data.error) ? data.error : (data && data.message) ? data.message : ('HTTP ' + response.status + ' ' + response.statusText);
+                                paintGenerationStatus(postId, 'failed', errorMessage, false);
+                                return;
+                            }
                             const status = data.generation_status || 'not_generated';
                             const outputUrl = data.generation_output_url || '';
                             const errorText = data.generation_error || '';
@@ -1385,10 +1421,12 @@
                             } else if (errorText) {
                                 paintGenerationStatus(postId, status, errorText, false);
                             } else {
-                                paintGenerationStatus(postId, status, status === 'processing' ? 'Виконується у Flow...' : '');
+                                paintGenerationStatus(postId, status, status === 'processing' ? 'Виконується у Flow...' : 'Немає активної генерації.', false);
                             }
                         })
-                        .catch(() => { });
+                        .catch(error => {
+                            paintGenerationStatus(postId, 'failed', error.message || 'Помилка зворотнього виклику', false);
+                        });
                 });
             }
 
@@ -1404,26 +1442,54 @@
                 });
             }
 
+            // Максимум 2 соц.мережі одночасно — менше горизонтального скролу, фокус.
+            const MAX_NETWORKS = 2;
+            const getNetCbs = () => Array.from(document.querySelectorAll('.network-vis-cb'));
+
+            function persistNetVis() {
+                const stored = {};
+                getNetCbs().forEach(function (cb) {
+                    stored[cb.getAttribute('data-filter-network-id')] = cb.checked;
+                });
+                localStorage.setItem(VIS_STORAGE_KEY, JSON.stringify(stored));
+            }
+
             function applyNetworkVisibility() {
                 let stored = {};
                 try { stored = JSON.parse(localStorage.getItem(VIS_STORAGE_KEY) || '{}'); } catch (e) { }
-                document.querySelectorAll('.network-vis-cb').forEach(function (cb) {
+                const cbs = getNetCbs();
+                let visibleIds = cbs
+                    .map(function (cb) { return cb.getAttribute('data-filter-network-id'); })
+                    .filter(function (nid) { return stored[nid] === true; });
+                if (visibleIds.length === 0) {
+                    // дефолт — перші дві мережі
+                    visibleIds = cbs.slice(0, MAX_NETWORKS).map(function (cb) { return cb.getAttribute('data-filter-network-id'); });
+                }
+                visibleIds = visibleIds.slice(0, MAX_NETWORKS);
+                const visSet = new Set(visibleIds);
+                cbs.forEach(function (cb) {
                     const nid = cb.getAttribute('data-filter-network-id');
-                    const visible = stored[nid] !== false; // default: true
-                    cb.checked = visible;
-                    setNetworkColsVisible(nid, visible);
+                    const v = visSet.has(nid);
+                    cb.checked = v;
+                    setNetworkColsVisible(nid, v);
                 });
+                persistNetVis();
             }
 
-            document.querySelectorAll('.network-vis-cb').forEach(function (cb) {
+            getNetCbs().forEach(function (cb) {
                 cb.addEventListener('change', function () {
-                    const nid = this.getAttribute('data-filter-network-id');
-                    const visible = this.checked;
-                    setNetworkColsVisible(nid, visible);
-                    let stored = {};
-                    try { stored = JSON.parse(localStorage.getItem(VIS_STORAGE_KEY) || '{}'); } catch (e) { }
-                    stored[nid] = visible;
-                    localStorage.setItem(VIS_STORAGE_KEY, JSON.stringify(stored));
+                    if (this.checked) {
+                        const checked = getNetCbs().filter(function (x) { return x.checked; });
+                        if (checked.length > MAX_NETWORKS) {
+                            const oldest = checked.find(function (x) { return x !== cb; });
+                            if (oldest) {
+                                oldest.checked = false;
+                                setNetworkColsVisible(oldest.getAttribute('data-filter-network-id'), false);
+                            }
+                        }
+                    }
+                    setNetworkColsVisible(this.getAttribute('data-filter-network-id'), this.checked);
+                    persistNetVis();
                 });
             });
 
