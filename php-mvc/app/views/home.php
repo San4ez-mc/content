@@ -253,6 +253,23 @@
         .category-meta-extra { display:none; }
         body.details-on .category-meta-extra { display:block; }
 
+        /* Календар-вигляд (альтернатива таблиці) */
+        .view-toggle { display:inline-flex; border:1px solid #cbd5e1; border-radius:8px; overflow:hidden; }
+        .view-toggle button { border:0; background:#fff; color:#475569; font-size:12px; padding:6px 12px; cursor:pointer; }
+        .view-toggle button.active { background:#5a6c7d; color:#fff; }
+        .cal-grid-head, .cal-grid { display:grid; grid-template-columns: repeat(7, 1fr); gap:6px; }
+        .cal-grid-head { margin-bottom:6px; }
+        .cal-dow { text-align:center; font-size:11px; font-weight:600; color:#64748b; padding:4px 0; }
+        .cal-cell { min-height:104px; border:1px solid #e5e7eb; border-radius:8px; padding:5px; background:#fff; overflow:hidden; }
+        .cal-cell.cal-out { background:#f8fafc; opacity:.5; }
+        .cal-daynum { font-size:12px; font-weight:700; color:#334155; margin-bottom:4px; display:flex; justify-content:space-between; align-items:baseline; }
+        .cal-mon { font-size:10px; color:#94a3b8; font-weight:400; }
+        .cal-chip { display:flex; align-items:center; gap:4px; border-left:3px solid #94a3b8; background:#f8fafc; border-radius:4px; padding:2px 5px; margin-bottom:3px; font-size:11px; }
+        .cal-chip-dot { width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
+        .cal-chip-net { font-weight:700; color:#475569; flex:0 0 auto; }
+        .cal-chip-txt { color:#334155; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cal-empty { font-size:10px; color:#cbd5e1; }
+
         .generation-meta {
             font-size: 11px;
             color: #64748b;
@@ -332,6 +349,10 @@
                 ?>
                 <!-- Компактний тулбар: мережі + масова генерація в одному рядку -->
                 <div class="cp-toolbar" style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:8px;">
+                <div class="view-toggle" id="view-toggle">
+                    <button type="button" data-view="table" class="active">📋 Таблиця</button>
+                    <button type="button" data-view="calendar">📅 Календар</button>
+                </div>
                 <div id="network-filter"
                     style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
                     <span style="font-size:12px;color:#475569;font-weight:600;">📱 Показати (макс 2):</span>
@@ -385,6 +406,70 @@
                         </div>
                     </div>
                 <?php endif; ?>
+
+                <?php
+                // ── Календар-вигляд (read-only огляд; рендериться поряд з таблицею) ──
+                $ukDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+                $ukMonthsShort = [1 => 'січ', 2 => 'лют', 3 => 'бер', 4 => 'кві', 5 => 'тра', 6 => 'чер', 7 => 'лип', 8 => 'сер', 9 => 'вер', 10 => 'жов', 11 => 'лис', 12 => 'гру'];
+                try {
+                    $calStart = new DateTime($dateFrom);
+                    $calEnd = new DateTime($dateTo);
+                } catch (Exception $e) {
+                    $calStart = new DateTime();
+                    $calEnd = new DateTime();
+                }
+                $gridStart = clone $calStart;
+                $wd = (int) $gridStart->format('N');
+                if ($wd > 1) $gridStart->modify('-' . ($wd - 1) . ' days');
+                $gridEnd = clone $calEnd;
+                $wd2 = (int) $gridEnd->format('N');
+                if ($wd2 < 7) $gridEnd->modify('+' . (7 - $wd2) . ' days');
+                $ctColorCal = ['ТИП 1' => '#22c55e', 'ТИП 2' => '#f59e0b', 'ТИП 3' => '#3b82f6'];
+                $statusDotCal = ['ready' => '#22c55e', 'generated' => '#22c55e', 'processing' => '#3b82f6', 'queued' => '#3b82f6', 'failed' => '#ef4444'];
+                $netNameById = [];
+                foreach ($enabledNetworks as $en) { $netNameById[(int) $en['id']] = (string) $en['name']; }
+                ?>
+                <div id="calendar-view" style="display:none;">
+                    <div class="cal-grid-head">
+                        <?php foreach ($ukDays as $d): ?><div class="cal-dow"><?php echo $d; ?></div><?php endforeach; ?>
+                    </div>
+                    <div class="cal-grid">
+                        <?php
+                        $cur = clone $gridStart;
+                        while ($cur <= $gridEnd):
+                            $dStr = $cur->format('Y-m-d');
+                            $inRange = ($cur >= $calStart && $cur <= $calEnd);
+                            $dayPosts = [];
+                            foreach (($postsByDateNetwork[$dStr] ?? []) as $netId => $arr) {
+                                foreach ($arr as $p) { $p['__net'] = (int) $netId; $dayPosts[] = $p; }
+                            }
+                        ?>
+                            <div class="cal-cell <?php echo $inRange ? '' : 'cal-out'; ?>">
+                                <div class="cal-daynum"><?php echo (int) $cur->format('j'); ?>
+                                    <span class="cal-mon"><?php echo $ukMonthsShort[(int) $cur->format('n')]; ?></span>
+                                </div>
+                                <?php if (empty($dayPosts) && $inRange): ?>
+                                    <div class="cal-empty">—</div>
+                                <?php endif; ?>
+                                <?php foreach ($dayPosts as $p):
+                                    $catC = $categoryLookupById[(int) ($p['category_id'] ?? 0)] ?? null;
+                                    $ctC = (string) ($catC['client_type'] ?? '');
+                                    $colC = $ctColorCal[$ctC] ?? '#94a3b8';
+                                    $stC = (string) ($p['generation_status'] ?? 'not_generated');
+                                    $sdC = $statusDotCal[$stC] ?? '#cbd5e1';
+                                    $txtC = trim((string) ($p['text'] ?? ''));
+                                    $netC = $netNameById[(int) $p['__net']] ?? '';
+                                ?>
+                                    <div class="cal-chip" style="border-left-color:<?php echo $colC; ?>;" title="<?php echo htmlspecialchars($txtC, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <span class="cal-chip-dot" style="background:<?php echo $sdC; ?>;"></span>
+                                        <span class="cal-chip-net"><?php echo htmlspecialchars(mb_substr($netC, 0, 2), ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <span class="cal-chip-txt"><?php echo htmlspecialchars(mb_substr($txtC, 0, 42), ENT_QUOTES, 'UTF-8'); ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php $cur->modify('+1 day'); endwhile; ?>
+                    </div>
+                </div>
 
                 <div class="table-wrapper">
                     <table class="content-table">
@@ -1553,6 +1638,28 @@
                     document.body.classList.toggle('details-on', cb.checked);
                     localStorage.setItem(KEY, cb.checked ? '1' : '0');
                 });
+            })();
+
+            // Перемикач Таблиця / Календар
+            (function () {
+                const KEY = 'cp_view';
+                const tgl = document.getElementById('view-toggle');
+                const tableEl = document.querySelector('.table-wrapper');
+                const calEl = document.getElementById('calendar-view');
+                if (!tgl || !tableEl || !calEl) return;
+                function setView(v) {
+                    const cal = v === 'calendar';
+                    calEl.style.display = cal ? '' : 'none';
+                    tableEl.style.display = cal ? 'none' : '';
+                    tgl.querySelectorAll('button').forEach(function (b) {
+                        b.classList.toggle('active', b.getAttribute('data-view') === v);
+                    });
+                    localStorage.setItem(KEY, v);
+                }
+                tgl.querySelectorAll('button').forEach(function (b) {
+                    b.addEventListener('click', function () { setView(b.getAttribute('data-view')); });
+                });
+                setView(localStorage.getItem(KEY) === 'calendar' ? 'calendar' : 'table');
             })();
         });
     </script>
