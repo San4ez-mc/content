@@ -242,6 +242,13 @@
             color: #991b1b;
         }
 
+        /* Колірне кодування за типом аудиторії — щоб план «зчитувався» поглядом */
+        .category-cell.ct-1 { border-left: 4px solid #22c55e; }   /* ТИП 1 — теплий */
+        .category-cell.ct-2 { border-left: 4px solid #f59e0b; }   /* ТИП 2 — скептик */
+        .category-cell.ct-3 { border-left: 4px solid #3b82f6; }   /* ТИП 3 — новачок */
+        .ct-legend { display:flex; gap:14px; align-items:center; font-size:11px; color:#64748b; margin:2px 0 8px; flex-wrap:wrap; }
+        .ct-legend .dot { display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:4px; vertical-align:middle; }
+
         .generation-meta {
             font-size: 11px;
             color: #64748b;
@@ -346,6 +353,13 @@
                 </div>
                 </div><!-- /cp-toolbar -->
 
+                <div class="ct-legend">
+                    <span>Тип аудиторії:</span>
+                    <span><span class="dot" style="background:#22c55e"></span>ТИП 1 — теплий</span>
+                    <span><span class="dot" style="background:#f59e0b"></span>ТИП 2 — скептик</span>
+                    <span><span class="dot" style="background:#3b82f6"></span>ТИП 3 — новачок</span>
+                </div>
+
                 <div class="table-wrapper">
                     <table class="content-table">
                         <thead>
@@ -399,8 +413,12 @@
                                             $postItem = $items[$rowIndex] ?? null;
                                             ?>
                                             <?php if ($postItem): ?>
-                                                <td class="net-sub-col category-cell" data-network-id="<?php echo (int) $network['id']; ?>">
-                                                    <?php $selectedCategory = $categoryLookupById[(int) ($postItem['category_id'] ?? 0)] ?? null; ?>
+                                                <?php
+                                                $selectedCategory = $categoryLookupById[(int) ($postItem['category_id'] ?? 0)] ?? null;
+                                                $ctRaw = (string) ($selectedCategory['client_type'] ?? '');
+                                                $ctClass = $ctRaw === 'ТИП 1' ? 'ct-1' : ($ctRaw === 'ТИП 2' ? 'ct-2' : ($ctRaw === 'ТИП 3' ? 'ct-3' : ''));
+                                                ?>
+                                                <td class="net-sub-col category-cell <?php echo $ctClass; ?>" data-network-id="<?php echo (int) $network['id']; ?>">
                                                     <form method="POST" action="/content-plan/update-post-category" class="category-form"
                                                         data-post-id="<?php echo (int) $postItem['id']; ?>" style="margin:0;">
                                                         <input type="hidden" name="post_id" value="<?php echo (int) $postItem['id']; ?>">
