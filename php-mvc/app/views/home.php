@@ -360,6 +360,24 @@
                     <span><span class="dot" style="background:#3b82f6"></span>ТИП 3 — новачок</span>
                 </div>
 
+                <?php
+                $__hasPosts = false;
+                foreach (($postsByDateNetwork ?? []) as $__d) {
+                    foreach ($__d as $__n) {
+                        if (!empty($__n)) { $__hasPosts = true; break 2; }
+                    }
+                }
+                ?>
+                <?php if (!$__hasPosts): ?>
+                    <div style="display:flex;align-items:center;gap:12px;padding:14px 18px;margin-bottom:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;color:#075985;">
+                        <span style="font-size:22px;">📭</span>
+                        <div>
+                            <div style="font-weight:600;">Плану на цей період ще немає</div>
+                            <div style="font-size:13px;color:#0369a1;">Згенеруй контент-план голосом або текстом через Telegram-бот <b>Content Manager</b> — пости зʼявляться тут автоматично. Або додай пост вручну у таблиці нижче.</div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <div class="table-wrapper">
                     <table class="content-table">
                         <thead>
