@@ -43,6 +43,7 @@ class ContentApiController extends BaseController
             'content-avatar-budget',
             'content-image-template',
             'content-ai-bg',
+            'content-video-broll',
         ];
 
         if (!in_array($funnel, $allowedFunnels)) {
