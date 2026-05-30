@@ -403,6 +403,7 @@
                 <button class="tab active" data-tab="images" onclick="switchTab(event, 'images')">📸 Зображення</button>
                 <button class="tab" data-tab="prompts" onclick="switchTab(event, 'prompts')">💬 Промпти</button>
                 <button class="tab" data-tab="generated" onclick="switchTab(event, 'generated')">✨ Згенеровані</button>
+                <button class="tab" data-tab="situational" onclick="switchTab(event, 'situational')">⚡ Ситуативні</button>
             </div>
 
             <?php if (isset($_GET['success'])): ?>
@@ -581,6 +582,19 @@
                     <?php endif; ?>
                 </div>
             </div>
+
+            <div id="tab-situational" class="tab-content">
+                <div class="prompts-section">
+                    <h3 style="margin-bottom:4px;">⚡ Ситуативні медіа</h3>
+                    <p style="color:#64748b;font-size:13px;margin-bottom:16px;">Фото і відео, надіслані в Telegram-бот. Зберігаються 7 днів.</p>
+                    <div id="sit-grid" class="generated-gallery">
+                        <div class="empty-state" style="grid-column:1/-1;">
+                            <div style="font-size:32px;margin-bottom:8px;">⏳</div>
+                            <p>Завантаження...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -621,6 +635,36 @@
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             event.currentTarget.classList.add('active');
             document.getElementById('tab-' + tabName).classList.add('active');
+            if (tabName === 'situational') loadSituationalMedia();
+        }
+
+        let sitLoaded = false;
+        function loadSituationalMedia() {
+            if (sitLoaded) return;
+            sitLoaded = true;
+            const pid = <?php echo (int)$active_project_id; ?>;
+            const grid = document.getElementById('sit-grid');
+            fetch('/get-situational-media.php?project_id=' + pid)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.ok || !data.items.length) {
+                        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div style="font-size:40px;margin-bottom:8px;">📭</div><h3>Немає ситуативних медіа</h3><p>Надішліть фото в Telegram-бот — воно з\'явиться тут</p></div>';
+                        return;
+                    }
+                    grid.innerHTML = data.items.map(item => {
+                        const isVideo = item.type === 'video' || item.type === 'animation';
+                        const thumb = isVideo
+                            ? '<div style="width:100%;height:220px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:48px;">🎬</div>'
+                            : '<img src="' + item.file_path + '" style="width:100%;height:220px;object-fit:cover;cursor:pointer;" onclick="window.open(this.src,\'_blank\')">';
+                        const dt = new Date(item.created_at.replace(' ', 'T'));
+                        const dateStr = dt.toLocaleDateString('uk-UA') + ' ' + dt.toLocaleTimeString('uk-UA', {hour:'2-digit',minute:'2-digit'});
+                        const caption = item.caption ? '<div style="font-size:12px;color:#475569;margin-top:4px;word-break:break-word;">' + item.caption.replace(/</g,'&lt;') + '</div>' : '';
+                        return '<div class="generated-card">' + thumb + '<div class="generated-info"><div class="generated-source">📅 ' + dateStr + '</div>' + caption + '</div></div>';
+                    }).join('');
+                })
+                .catch(() => {
+                    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">❌ Помилка завантаження</div>';
+                });
         }
 
         function showGenerateModal(filename) {
