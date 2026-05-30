@@ -1290,9 +1290,11 @@ P&L: бачиш реальний прибуток
     </table>
 
     <div style="font-size:12px;color:#9ca3af;text-align:center;padding-bottom:24px;margin-top:4px;">
-        <strong style="color:#22c55e">10 готових</strong> (Силует×2 + Карусель + Solid/Photo/SocProof/Promo + Субтитри×2 + AI B-roll) ·
+        <strong style="color:#22c55e">12 готових</strong> (AI Фон + Силует×2 + Мультиплашки + Карусель×2 + Solid/Photo/SocProof/Promo + Karaoke + AI B-roll) ·
         <strong style="color:#d97706">2 потребують API-ключ</strong> (HeyGen, ElevenLabs) ·
-        <strong style="color:#6b7280">2 потребують налаштування</strong> (Список тез, Bar Chart — HyperFrames)
+        <strong style="color:#6b7280">2 потребують налаштування</strong> (Список тез, Bar Chart — HyperFrames) ·
+        <strong style="color:#9ca3af">1 планується</strong> (Силует зовн. API) ·
+        <strong style="color:#9ca3af">1 потрібна форма</strong> (Монтаж + субтитри)
     </div>
 </div>
 
