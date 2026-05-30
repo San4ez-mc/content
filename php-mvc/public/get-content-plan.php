@@ -52,7 +52,7 @@ if (!empty($_GET['date_from'])) { $where .= ' AND post_date >= ?'; $params[] = $
 if (!empty($_GET['date_to']))   { $where .= ' AND post_date <= ?'; $params[] = $_GET['date_to']; }
 
 $rows = $db->query(
-    "SELECT id, post_date, social_network_id, text, generation_status FROM posts WHERE $where ORDER BY post_date ASC, id ASC",
+    "SELECT id, post_date, social_network_id, text FROM posts WHERE $where ORDER BY post_date ASC, id ASC",
     $params
 )->fetchAll(PDO::FETCH_ASSOC);
 
@@ -63,7 +63,7 @@ foreach ($rows as $r) {
         'date'     => $r['post_date'],
         'platform' => platKey($snById[(int) $r['social_network_id']] ?? ''),
         'content'  => (string) $r['text'],
-        'status'   => $r['generation_status'] ?: 'scheduled',
+        'status'   => 'scheduled',
     ];
 }
 
