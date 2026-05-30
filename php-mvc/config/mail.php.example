@@ -1,0 +1,11 @@
+<?php
+// config/mail.php — копія цього файлу як config/mail.php із реальними даними (gitignored)
+return [
+    'host'      => 'mail.example.com',
+    'port'      => 465,
+    'username'  => 'content@example.com',
+    'password'  => 'CHANGE_ME',
+    'from'      => 'content@example.com',
+    'from_name' => 'Content Planner',
+    'encryption'=> 'ssl',
+];
