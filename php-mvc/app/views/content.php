@@ -2003,38 +2003,44 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
                 if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Вкажіть промпт для AI фону'; }
                 return;
             }
-            const btn = document.getElementById('btn-' + prefix);
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Генерація (~5-20 сек)...'; }
-            const errEl = document.getElementById('err-' + prefix);
-            if (errEl) errEl.style.display = 'none';
-
-            const params = {
-                prompt,
-                width,
-                height,
-                title:    document.getElementById(prefix + '-title')?.value?.trim() || '',
-                subtitle: document.getElementById(prefix + '-subtitle')?.value?.trim() || '',
-                extra:    document.getElementById(prefix + '-extra')?.value?.trim() || '',
-                bgColor:  document.getElementById(prefix + '-bgColor')?.value || '#0f172a',
-                accent:   document.getElementById(prefix + '-accent')?.value || '#3b82f6',
-                fgColor:  '#ffffff',
-            };
-
-            try {
-                const resp = await fetch('/api/content-generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ funnel: 'content-ai-bg', params })
-                });
-                const result = await resp.json();
-                if (!result.ok) throw new Error(result.error || 'Помилка');
-                showImageResult(result, prefix, 'content-ai-bg', params, width, height);
-            } catch (e) {
-                if (errEl) { errEl.style.display = 'block'; errEl.textContent = '❌ ' + e.message; }
-            } finally {
-                if (btn) { btn.disabled = false; btn.textContent = '🎨 Згенерувати (AI)'; }
-            }
+            // Делегуємо в загальний generateViaFunnel з prompt/width/height як extraParams
+            await generateViaFunnel('content-ai-bg', { prompt, width, height, fgColor: '#ffffff' }, prefix);
         }
+
+        // ── Посилання на редагування воронок у flows.fineko.space ──
+        const FUNNEL_BOT_IDS = {
+            'content-ai-bg':             '84992218-0c09-4985-a1fe-6f7f3bf35d99',
+            'content-ai-bg-pro':         '058f48d6-4e67-4c17-af0e-ff7e586a179b',
+            'content-ideogram':          '16c44a5b-8c82-4755-b219-854b51191d26',
+            'content-recraft':           '96ba01dc-bf2c-480a-9daa-e34550dc51f7',
+            'content-stories-generator': '970db17c-bebf-459f-9d28-d8cf7e66494d',
+            'content-carousel':          '81da622c-bfea-41da-98ba-54847a820f7f',
+            'content-image-template':    '9900f5f6-a09f-4f80-ac7a-e00ccd37975c',
+            'content-video-broll':       'eab35f1f-06fc-4c7f-b1b7-e9b01b51acd5',
+            'content-video-basic-subs':  'd093dac7-1d33-4e09-81c0-8163c3ef662a',
+            'content-video-remotion':    'd8b936af-b6ae-49d7-9f7f-32c35c93d370',
+            'content-avatar-heygen':     '55f6eb36-6734-4e21-8640-6758217bb9d4',
+            'content-avatar-budget':     '7a9cfa91-7ea4-4464-97db-bc7aac796f43',
+            'content-resizer':           '702d5f7d-ea28-47c5-a679-e6a65a4c9a06',
+            'content-manager':           'bd48bae3-d35b-45f9-bcdd-3e74884b61bf',
+            'content-manager-v2':        '22f2bce5-ac62-4297-8ea0-66e258e8b505',
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.cs-funnel-tag').forEach(el => {
+                // Витягуємо slug — текст після емодзі (🔗 content-ai-bg → content-ai-bg)
+                const slug = el.textContent.trim().replace(/^[^\w-]+/, '').trim();
+                const botId = FUNNEL_BOT_IDS[slug];
+                if (!botId) return;
+                const editUrl = 'https://flows.fineko.space/bot/' + botId;
+                el.title = 'Відкрити воронку в редакторі';
+                el.style.cursor = 'pointer';
+                el.innerHTML = '🔗 ' + slug + ' <span style="opacity:.6;font-size:9px">✏️</span>';
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    window.open(editUrl, '_blank');
+                });
+            });
+        });
 </script>
 </body>
 </html>
