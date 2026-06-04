@@ -727,12 +727,31 @@ class HomeController extends BaseController
         $scheme      = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $callbackUrl = $scheme . '://' . $baseUrl . '/bot-chat-receive?sid=' . urlencode($sid);
 
+        // Load categories for the active project
+        $projectData    = $this->ensureProjectSelected();
+        $activeProjectId = (int) $projectData['active_project_id'];
+        $categories = [];
+        try {
+            $rows = $this->db->query(
+                'SELECT c.id, c.name, sn.name AS network FROM categories c
+                 JOIN social_networks sn ON sn.id = c.social_network_id
+                 WHERE c.project_id = ? ORDER BY sn.sort_order, c.sort_order, c.id',
+                [$activeProjectId]
+            )->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($rows as $r) {
+                $categories[] = ['id' => (int)$r['id'], 'name' => $r['name'], 'network' => $r['network']];
+            }
+        } catch (\Throwable $e) { /* ignore */ }
+
         $botWebhook  = 'https://flows.fineko.space/webhook/bot/content-manager-web';
         $webhookPayload = json_encode([
-            'message'     => $message,
-            'text'        => $message,
-            'callbackUrl' => $callbackUrl,
-            'sessionId'   => $sid,
+            'message'          => $message,
+            'text'             => $message,
+            'callbackUrl'      => $callbackUrl,
+            'sessionId'        => $sid,
+            'projectId'        => $activeProjectId,
+            'availableCategories' => $categories,
+            'today'            => date('Y-m-d'),
         ], JSON_UNESCAPED_UNICODE);
 
         $ch = curl_init($botWebhook);
