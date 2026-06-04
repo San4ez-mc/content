@@ -32,11 +32,119 @@
         .table-wrapper {
             overflow-x: auto;
             overflow-y: visible;
-            max-height: calc(100vh - 140px);
+            max-height: calc(100vh - 120px);
             position: relative;
             border: 1px solid #e5e5e5;
             border-radius: 8px;
         }
+
+        /* ── Compact toolbar ── */
+        .cp-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            align-items: center;
+            margin-bottom: 6px;
+            padding: 6px 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .cp-toolbar .view-toggle { flex: 0 0 auto; }
+        .cp-toolbar .view-toggle button { padding: 4px 10px; font-size: 12px; }
+        .net-filter-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .net-filter-inline label { font-size: 12px; color: #334155; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .bulk-gen-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .bulk-gen-inline .date-input { padding: 4px 6px; font-size: 12px; }
+
+        /* ── Chat FAB + Slide-in panel ── */
+        #cm-chat-fab {
+            position: fixed; bottom: 28px; right: 28px; z-index: 1100;
+            width: 58px; height: 58px; border-radius: 50%;
+            background: linear-gradient(135deg, #5a6c7d, #3d4f5e);
+            color: white; border: none; font-size: 26px; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,.3);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform .2s, box-shadow .2s;
+        }
+        #cm-chat-fab:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(0,0,0,.35); }
+        #cm-chat-fab.open { background: linear-gradient(135deg, #e8675f, #c0392b); }
+
+        #cm-chat-panel {
+            position: fixed; top: 0; right: -420px; bottom: 0; z-index: 1050;
+            width: 400px; max-width: calc(100vw - 16px);
+            background: white; box-shadow: -4px 0 32px rgba(0,0,0,.18);
+            display: flex; flex-direction: column;
+            transition: right .3s cubic-bezier(.4,0,.2,1);
+        }
+        #cm-chat-panel.open { right: 0; }
+
+        .cm-panel-header {
+            background: linear-gradient(135deg, #5a6c7d, #3d4f5e);
+            color: white; padding: 16px 18px; display: flex;
+            align-items: center; gap: 10px; flex-shrink: 0;
+        }
+        .cm-panel-header .cm-logo { font-size: 22px; }
+        .cm-panel-header .cm-title { flex: 1; }
+        .cm-panel-header .cm-title strong { display: block; font-size: 15px; font-weight: 700; }
+        .cm-panel-header .cm-title span { font-size: 11px; opacity: .75; }
+        .cm-panel-close {
+            background: rgba(255,255,255,.15); border: none; color: white;
+            width: 30px; height: 30px; border-radius: 50%; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .cm-panel-close:hover { background: rgba(255,255,255,.25); }
+
+        .cm-chat-messages {
+            flex: 1; overflow-y: auto; padding: 16px 14px;
+            display: flex; flex-direction: column; gap: 10px;
+            scroll-behavior: smooth;
+        }
+        .cm-msg {
+            font-size: 13px; line-height: 1.55; border-radius: 12px;
+            padding: 10px 13px; max-width: 88%; word-break: break-word;
+            white-space: pre-wrap;
+        }
+        .cm-msg.bot {
+            background: #f1f5f9; color: #1e293b;
+            align-self: flex-start; border-bottom-left-radius: 4px;
+        }
+        .cm-msg.user {
+            background: linear-gradient(135deg, #5a6c7d, #3d4f5e);
+            color: white; align-self: flex-end; border-bottom-right-radius: 4px;
+        }
+        .cm-msg.typing {
+            background: #f1f5f9; color: #64748b;
+            align-self: flex-start; font-style: italic; font-size: 12px;
+        }
+        .cm-msg.error { background: #fef2f2; color: #991b1b; align-self: flex-start; }
+
+        .cm-chat-footer {
+            border-top: 1px solid #e5e7eb; padding: 12px 14px;
+            display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+            background: #fafafa;
+        }
+        #cm-chat-input {
+            flex: 1; resize: none; border: 1px solid #d1d5db;
+            border-radius: 10px; padding: 9px 12px; font-size: 13px;
+            font-family: inherit; min-height: 40px; max-height: 120px;
+            line-height: 1.45; outline: none; transition: border-color .2s;
+        }
+        #cm-chat-input:focus { border-color: #5a6c7d; }
+        #cm-chat-send {
+            background: #5a6c7d; color: white; border: none;
+            border-radius: 10px; width: 40px; height: 40px; cursor: pointer;
+            font-size: 16px; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: background .2s;
+        }
+        #cm-chat-send:hover { background: #48596a; }
+        #cm-chat-send:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .cm-chat-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,.3);
+            z-index: 1040; display: none;
+        }
+        .cm-chat-overlay.open { display: block; }
 
         .content-table {
             width: 100%;
@@ -44,8 +152,14 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            min-width: 1600px;
+            table-layout: fixed;
         }
+        /* date col = fixed 72px; each visible network fills equal share of the rest */
+        .content-table .col-date { width: 72px; }
+        .content-table.nets-1 .net-header-col,
+        .content-table.nets-1 .net-sub-col { width: auto; }
+        .content-table.nets-2 .net-header-col,
+        .content-table.nets-2 .net-sub-col.post-col { width: auto; }
 
         .content-table th {
             background: #5a6c7d;
@@ -347,47 +461,45 @@
                     }
                 }
                 ?>
-                <!-- Компактний тулбар: мережі + масова генерація в одному рядку -->
-                <div class="cp-toolbar" style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:8px;">
-                <div class="view-toggle" id="view-toggle">
-                    <button type="button" data-view="table" class="active">📋 Таблиця</button>
-                    <button type="button" data-view="calendar">📅 Календар</button>
-                </div>
-                <div id="network-filter"
-                    style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
-                    <span style="font-size:12px;color:#475569;font-weight:600;">📱 Показати (макс 2):</span>
-                    <?php foreach ($enabledNetworks as $network): ?>
-                        <label
-                            style="display:flex;align-items:center;gap:5px;font-size:13px;color:#334155;cursor:pointer;user-select:none;">
-                            <input type="checkbox" class="network-vis-cb"
-                                data-filter-network-id="<?php echo (int) $network['id']; ?>" checked
-                                style="cursor:pointer;width:15px;height:15px;accent-color:#5a6c7d;">
-                            <?php echo htmlspecialchars($network['name'], ENT_QUOTES, 'UTF-8'); ?>
-                        </label>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="bulk-generation-bar" style="margin:0;padding:6px 12px;">
-                    <span style="font-size:12px;color:#334155;font-weight:600;">⚡ Масова генерація:</span>
-                    <button type="button" class="mini-btn add" id="bulk-generate-selected">Згенерувати для вибраних (<span
-                            id="bulk-selected-count">0</span>)</button>
-                    <input type="date" id="bulk-day-input" class="date-input"
-                        value="<?php echo htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8'); ?>" style="padding:6px 8px;font-size:12px;">
-                    <button type="button" class="mini-btn add" id="bulk-generate-day">Згенерувати весь день</button>
-                    <span id="bulk-generation-status" class="muted"></span>
-                </div>
-                <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#334155;cursor:pointer;user-select:none;">
-                    <input type="checkbox" id="toggle-details" style="cursor:pointer;width:15px;height:15px;accent-color:#5a6c7d;">
-                    🔎 Деталі аватара
-                </label>
+                <!-- Компактний тулбар -->
+                <div class="cp-toolbar">
+                    <div class="view-toggle" id="view-toggle">
+                        <button type="button" data-view="table" class="active">📋</button>
+                        <button type="button" data-view="calendar">📅</button>
+                    </div>
+                    <span style="font-size:11px;color:#94a3b8;">|</span>
+                    <div class="net-filter-inline" id="network-filter">
+                        <span style="font-size:11px;color:#64748b;font-weight:600;">Мережі:</span>
+                        <?php foreach ($enabledNetworks as $network): ?>
+                            <label>
+                                <input type="checkbox" class="network-vis-cb"
+                                    data-filter-network-id="<?php echo (int) $network['id']; ?>" checked
+                                    style="cursor:pointer;width:13px;height:13px;accent-color:#5a6c7d;">
+                                <?php echo htmlspecialchars($network['name'], ENT_QUOTES, 'UTF-8'); ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <span style="font-size:11px;color:#94a3b8;">|</span>
+                    <div class="bulk-gen-inline">
+                        <span style="font-size:11px;color:#64748b;font-weight:600;">⚡</span>
+                        <button type="button" class="mini-btn add" id="bulk-generate-selected" style="padding:4px 8px;font-size:11px;">Вибрані (<span id="bulk-selected-count">0</span>)</button>
+                        <input type="date" id="bulk-day-input" class="date-input"
+                            value="<?php echo htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8'); ?>">
+                        <button type="button" class="mini-btn add" id="bulk-generate-day" style="padding:4px 8px;font-size:11px;">День</button>
+                        <span id="bulk-generation-status" class="muted" style="font-size:11px;"></span>
+                    </div>
+                    <span style="font-size:11px;color:#94a3b8;">|</span>
+                    <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#334155;cursor:pointer;">
+                        <input type="checkbox" id="toggle-details" style="cursor:pointer;width:13px;height:13px;accent-color:#5a6c7d;">
+                        🔎 Аватар
+                    </label>
+                    <div class="ct-legend" style="margin:0;flex:1;justify-content:flex-end;">
+                        <span style="font-size:10px;color:#94a3b8;">Аудиторія:</span>
+                        <span style="font-size:10px;"><span class="dot" style="background:#22c55e"></span>Тепл.</span>
+                        <span style="font-size:10px;"><span class="dot" style="background:#f59e0b"></span>Скепт.</span>
+                        <span style="font-size:10px;"><span class="dot" style="background:#3b82f6"></span>Нов.</span>
+                    </div>
                 </div><!-- /cp-toolbar -->
-
-                <div class="ct-legend">
-                    <span>Тип аудиторії:</span>
-                    <span><span class="dot" style="background:#22c55e"></span>ТИП 1 — теплий</span>
-                    <span><span class="dot" style="background:#f59e0b"></span>ТИП 2 — скептик</span>
-                    <span><span class="dot" style="background:#3b82f6"></span>ТИП 3 — новачок</span>
-                </div>
 
                 <?php
                 $__hasPosts = false;
@@ -892,11 +1004,40 @@
                 </datalist>
             <?php endif; ?>
 
-            <div
-                style="margin-top:20px;padding:14px;background:#ecf0f6;border-radius:8px;border-left:4px solid #5a6c7d;font-size:13px;">
-                <strong>💡 Як це працює:</strong> У кожній даті та колонці мережі доступна кнопка додавання категорії.
-                Біля кожної доданої категорії є іконка видалення. Редагування тексту поста зберігається в БД.
+            <div id="cp-tip"
+                style="margin-top:16px;padding:10px 14px;background:#ecf0f6;border-radius:8px;border-left:4px solid #5a6c7d;font-size:12px;color:#475569;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                <span><strong>💡 Як це працює:</strong> Кнопка + додає категорію до дати/мережі. Іконка 🗑️ видаляє. Текст зберігається автоматично.</span>
+                <button onclick="document.getElementById('cp-tip').style.display='none';localStorage.setItem('cp_tip_hidden','1');"
+                    style="background:none;border:none;cursor:pointer;font-size:16px;color:#94a3b8;line-height:1;flex:0 0 auto;" title="Закрити">✕</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ── Content Manager Chat Widget ── -->
+    <div class="cm-chat-overlay" id="cm-chat-overlay"></div>
+    <button id="cm-chat-fab" title="Content Manager — генерація контенту">✦</button>
+    <div id="cm-chat-panel">
+        <div class="cm-panel-header">
+            <span class="cm-logo">🤖</span>
+            <div class="cm-title">
+                <strong>Content Manager</strong>
+                <span>Генерація постів, сторіз, каруселей і планів</span>
+            </div>
+            <button class="cm-panel-close" id="cm-panel-close">✕</button>
+        </div>
+        <div class="cm-chat-messages" id="cm-chat-messages">
+            <div class="cm-msg bot">Привіт! Я Content Manager 2.0 🚀
+
+Що можу:
+• Пости для Instagram, Threads, LinkedIn
+• Сторіз, каруселі, Reels
+• Контент план на тиждень для будь-якої платформи
+
+Просто напиши що треба — без зайвих слів!</div>
+        </div>
+        <div class="cm-chat-footer">
+            <textarea id="cm-chat-input" placeholder="Наприклад: зроби 3 сторіз про автоматизацію" rows="1"></textarea>
+            <button id="cm-chat-send" title="Відправити (Enter)">➤</button>
         </div>
     </div>
 
@@ -1626,6 +1767,28 @@
 
             applyNetworkVisibility();
 
+            // ─── Адаптивні ширини колонок таблиці ───
+            function updateTableCols() {
+                const table = document.querySelector('.content-table');
+                if (!table) return;
+                const visibleNets = getNetCbs().filter(cb => cb.checked).length || 1;
+                table.className = table.className.replace(/\bnets-\d+/g, '');
+                table.classList.add('nets-' + visibleNets);
+                // date header
+                const dateHeaders = table.querySelectorAll('th:first-child, td.date-cell');
+                dateHeaders.forEach(el => { el.style.width = '72px'; el.style.minWidth = '72px'; });
+                // network cols get equal share
+                const netHeaders = table.querySelectorAll('.net-header-col');
+                netHeaders.forEach(th => {
+                    const nid = th.getAttribute('data-network-id');
+                    const isVisible = Array.from(getNetCbs()).find(cb => cb.getAttribute('data-filter-network-id') === nid)?.checked;
+                    if (isVisible) th.setAttribute('colspan', '2');
+                });
+            }
+            // hook into existing visibility changes
+            getNetCbs().forEach(cb => cb.addEventListener('change', () => setTimeout(updateTableCols, 50)));
+            updateTableCols();
+
             // Перемикач «Деталі аватара» — ховає другорядні поля за замовчуванням
             (function () {
                 const KEY = 'cp_details_on';
@@ -1662,6 +1825,120 @@
                 setView(localStorage.getItem(KEY) === 'calendar' ? 'calendar' : 'table');
             })();
         });
+
+        // ─── Підказка: відновити якщо не приховано ───
+        (function() {
+            if (localStorage.getItem('cp_tip_hidden') === '1') {
+                const tip = document.getElementById('cp-tip');
+                if (tip) tip.style.display = 'none';
+            }
+        })();
+
+        // ─── Content Manager Chat Panel ───
+        (function () {
+            const fab     = document.getElementById('cm-chat-fab');
+            const panel   = document.getElementById('cm-chat-panel');
+            const overlay = document.getElementById('cm-chat-overlay');
+            const closeBtn= document.getElementById('cm-panel-close');
+            const msgs    = document.getElementById('cm-chat-messages');
+            const input   = document.getElementById('cm-chat-input');
+            const sendBtn = document.getElementById('cm-chat-send');
+            if (!fab || !panel) return;
+
+            let sessionId  = null;
+            let pollTimer  = null;
+            let typingEl   = null;
+
+            function openPanel()  { panel.classList.add('open'); overlay.classList.add('open'); fab.classList.add('open'); fab.textContent = '✕'; input.focus(); }
+            function closePanel() { panel.classList.remove('open'); overlay.classList.remove('open'); fab.classList.remove('open'); fab.textContent = '✦'; }
+
+            fab.addEventListener('click', () => panel.classList.contains('open') ? closePanel() : openPanel());
+            closeBtn.addEventListener('click', closePanel);
+            overlay.addEventListener('click', closePanel);
+
+            // auto-resize textarea
+            input.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+            });
+            sendBtn.addEventListener('click', sendMsg);
+
+            function scrollBottom() { msgs.scrollTop = msgs.scrollHeight; }
+
+            function addMsg(text, role) {
+                const el = document.createElement('div');
+                el.className = 'cm-msg ' + role;
+                el.textContent = text;
+                msgs.appendChild(el);
+                scrollBottom();
+                return el;
+            }
+
+            function showTyping() {
+                if (typingEl) return;
+                typingEl = addMsg('⏳ Генерую...', 'typing');
+            }
+
+            function hideTyping() {
+                if (typingEl) { typingEl.remove(); typingEl = null; }
+            }
+
+            function startPolling(sid) {
+                stopPolling();
+                let attempts = 0;
+                pollTimer = setInterval(function () {
+                    attempts++;
+                    if (attempts > 90) { stopPolling(); hideTyping(); addMsg('⏱ Генерація займає більше часу. Спробуй ще раз.', 'error'); return; }
+                    fetch('/bot-chat-poll?sid=' + encodeURIComponent(sid))
+                        .then(r => r.json())
+                        .then(data => {
+                            const messages = (data && data.messages) || [];
+                            messages.forEach(function (m) {
+                                hideTyping();
+                                addMsg(m.text || '', 'bot');
+                            });
+                            if (data && data.done) stopPolling();
+                        })
+                        .catch(() => {});
+                }, 2000);
+            }
+
+            function stopPolling() {
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            }
+
+            function sendMsg() {
+                const text = (input.value || '').trim();
+                if (!text) return;
+                addMsg(text, 'user');
+                input.value = '';
+                input.style.height = 'auto';
+                sendBtn.disabled = true;
+                showTyping();
+                stopPolling();
+
+                fetch('/bot-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text, sessionId: sessionId })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.ok && data.sessionId) {
+                        sessionId = data.sessionId;
+                        startPolling(sessionId);
+                    } else {
+                        hideTyping();
+                        addMsg('⚠️ Помилка: ' + (data && data.error ? data.error : 'невідома'), 'error');
+                    }
+                })
+                .catch(() => { hideTyping(); addMsg('⚠️ Помилка з\'єднання', 'error'); })
+                .finally(() => { sendBtn.disabled = false; });
+            }
+        })();
     </script>
 </body>
 

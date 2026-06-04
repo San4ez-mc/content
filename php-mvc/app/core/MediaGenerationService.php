@@ -318,6 +318,26 @@ class MediaGenerationService
             return 'content-carousel';
         }
 
+        // AI background (FLUX) — for any post/stories/reels that has image_prompt set
+        if (!empty(trim((string) ($post['image_prompt'] ?? '')))) {
+            return 'content-ai-bg';
+        }
+
+        // Ideogram — images with embedded text (quotes, stats, promos)
+        if (in_array($postType, ['ideogram', 'text_image', 'quote', 'цитата'], true)) {
+            return 'content-ideogram';
+        }
+
+        // Recraft — brand design, infographics
+        if (in_array($postType, ['recraft', 'brand', 'infographic', 'інфографіка'], true)) {
+            return 'content-recraft';
+        }
+
+        // AI B-roll video (Kling)
+        if (in_array($postType, ['broll', 'ai_video', 'kling', 'b-roll'], true)) {
+            return 'content-video-broll';
+        }
+
         // Stories / feed — default image generation
         return 'content-stories-generator';
     }
@@ -378,8 +398,49 @@ class MediaGenerationService
                     'callbackUrl'   => $callbackUrl,
                 ];
 
+            case 'content-ai-bg':
+            case 'content-ai-bg-pro':
+                $imagePrompt = trim((string) ($post['image_prompt'] ?? $post['image_text'] ?? $text));
+                $hookTitle   = mb_substr(preg_replace('/\n.*/', '', $text), 0, 40, 'UTF-8');
+                return [
+                    'postId'      => (string) $postId,
+                    'prompt'      => $imagePrompt,
+                    'title'       => $hookTitle,
+                    'width'       => 1080,
+                    'height'      => 1350,
+                    'callbackUrl' => $callbackUrl,
+                ];
+
+            case 'content-ideogram':
+                $ideogramPrompt = trim((string) ($post['image_prompt'] ?? $post['image_text'] ?? $text));
+                return [
+                    'postId'       => (string) $postId,
+                    'prompt'       => $ideogramPrompt,
+                    'title'        => mb_substr(preg_replace('/\n.*/', '', $text), 0, 80, 'UTF-8'),
+                    'aspect_ratio' => 'ASPECT_9_16',
+                    'callbackUrl'  => $callbackUrl,
+                ];
+
+            case 'content-recraft':
+                $recraftPrompt = trim((string) ($post['image_prompt'] ?? $post['image_text'] ?? $text));
+                return [
+                    'postId'      => (string) $postId,
+                    'prompt'      => $recraftPrompt,
+                    'style'       => 'digital_illustration',
+                    'callbackUrl' => $callbackUrl,
+                ];
+
+            case 'content-video-broll':
+                $brollPrompt = trim((string) ($post['image_prompt'] ?? $post['image_text'] ?? $text));
+                return [
+                    'postId'      => (string) $postId,
+                    'prompt'      => $brollPrompt,
+                    'duration'    => 5,
+                    'callbackUrl' => $callbackUrl,
+                ];
+
             default:
-                // Legacy format for avatar flows and any future custom keys
+                // Avatar flows
                 return [
                     'projectId'  => $projectId,
                     'postId'     => $postId,

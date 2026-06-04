@@ -703,6 +703,141 @@ class HomeController extends BaseController
         ]);
     }
 
+    public function botChat()
+    {
+        require_once __DIR__ . '/AuthController.php';
+        AuthController::check();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $body    = (string) file_get_contents('php://input');
+        $payload = json_decode($body, true);
+        $message = trim((string) ($payload['message'] ?? ''));
+
+        if ($message === '') {
+            echo json_encode(['ok' => false, 'error' => 'empty_message']);
+            return;
+        }
+
+        // Generate session ID for this request
+        $sid = 'ws_' . bin2hex(random_bytes(12));
+        $this->chatStoreClear($sid);
+
+        $baseUrl     = rtrim((string) ($_SERVER['HTTP_HOST'] ?? 'content.fineko.space'), '/');
+        $scheme      = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $callbackUrl = $scheme . '://' . $baseUrl . '/bot-chat-receive?sid=' . urlencode($sid);
+
+        $botWebhook  = 'https://flows.fineko.space/webhook/bot/content-manager-web';
+        $webhookPayload = json_encode([
+            'message'     => $message,
+            'text'        => $message,
+            'callbackUrl' => $callbackUrl,
+            'sessionId'   => $sid,
+        ], JSON_UNESCAPED_UNICODE);
+
+        $ch = curl_init($botWebhook);
+        curl_setopt_array($ch, [
+            CURLOPT_POST           => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POSTFIELDS     => $webhookPayload,
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0,
+        ]);
+        $response = curl_exec($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr  = curl_error($ch);
+        curl_close($ch);
+
+        if ($response === false || $httpCode < 200 || $httpCode >= 300) {
+            echo json_encode(['ok' => false, 'error' => $curlErr ?: 'http_' . $httpCode]);
+            return;
+        }
+
+        echo json_encode(['ok' => true, 'sessionId' => $sid]);
+    }
+
+    public function botChatReceive()
+    {
+        // No auth check — called by bot webhook
+        header('Content-Type: application/json; charset=utf-8');
+
+        $sid  = trim((string) ($_GET['sid'] ?? ''));
+        if ($sid === '' || !preg_match('/^ws_[a-f0-9]+$/i', $sid)) {
+            echo json_encode(['ok' => false, 'error' => 'invalid_sid']);
+            return;
+        }
+
+        $body    = (string) file_get_contents('php://input');
+        $payload = json_decode($body, true);
+        $text    = trim((string) ($payload['text'] ?? ''));
+
+        if ($text !== '') {
+            $this->chatStoreAppend($sid, $text);
+        }
+
+        echo json_encode(['ok' => true]);
+    }
+
+    public function botChatPoll()
+    {
+        require_once __DIR__ . '/AuthController.php';
+        AuthController::check();
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $sid = trim((string) ($_GET['sid'] ?? ''));
+        if ($sid === '' || !preg_match('/^ws_[a-f0-9]+$/i', $sid)) {
+            echo json_encode(['messages' => []]);
+            return;
+        }
+
+        $messages = $this->chatStoreFlush($sid);
+        echo json_encode(['messages' => $messages]);
+    }
+
+    // ── Simple file-based chat response store ──
+
+    private function chatFile($sid)
+    {
+        $dir = sys_get_temp_dir() . '/cm_webchat';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        return $dir . '/' . preg_replace('/[^a-z0-9_]/i', '', $sid) . '.json';
+    }
+
+    private function chatStoreClear($sid)
+    {
+        file_put_contents($this->chatFile($sid), json_encode(['messages' => [], 'ts' => time()]));
+    }
+
+    private function chatStoreAppend($sid, $text)
+    {
+        $file = $this->chatFile($sid);
+        $data = [];
+        if (file_exists($file)) {
+            $data = json_decode((string) file_get_contents($file), true) ?: [];
+        }
+        $data['messages'][]  = ['text' => $text, 'time' => time()];
+        $data['ts'] = time();
+        file_put_contents($file, json_encode($data));
+    }
+
+    private function chatStoreFlush($sid)
+    {
+        $file = $this->chatFile($sid);
+        if (!file_exists($file)) {
+            return [];
+        }
+        $data     = json_decode((string) file_get_contents($file), true) ?: [];
+        $messages = $data['messages'] ?? [];
+        $data['messages'] = [];
+        file_put_contents($file, json_encode($data));
+        return $messages;
+    }
+
     private function normalizeImageAction($rawAction)
     {
         $action = trim((string) $rawAction);

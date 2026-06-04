@@ -275,6 +275,18 @@ if ($uri === '' || $uri === 'home') {
     require_once __DIR__ . '/../app/controllers/CronController.php';
     $controller = new CronController($db);
     $controller->test();
+} elseif ($uri === 'bot-chat' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/HomeController.php';
+    $controller = new HomeController($db);
+    $controller->botChat();
+} elseif ($uri === 'bot-chat-receive' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../app/controllers/HomeController.php';
+    $controller = new HomeController($db);
+    $controller->botChatReceive();
+} elseif ($uri === 'bot-chat-poll' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once __DIR__ . '/../app/controllers/HomeController.php';
+    $controller = new HomeController($db);
+    $controller->botChatPoll();
 } else {
     http_response_code(404);
     echo '404 Not Found';
