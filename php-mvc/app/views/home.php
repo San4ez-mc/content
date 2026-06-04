@@ -38,24 +38,32 @@
             border-radius: 8px;
         }
 
-        /* ── Compact toolbar ── */
+        /* ── Compact toolbar — одна полоска ~32px ── */
         .cp-toolbar {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px 10px;
+            flex-wrap: nowrap;
+            gap: 0 8px;
             align-items: center;
-            margin-bottom: 6px;
-            padding: 6px 10px;
+            margin-bottom: 4px;
+            padding: 4px 8px;
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border-radius: 6px;
+            min-height: 32px;
+            overflow: hidden;
         }
-        .cp-toolbar .view-toggle { flex: 0 0 auto; }
-        .cp-toolbar .view-toggle button { padding: 4px 10px; font-size: 12px; }
-        .net-filter-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-        .net-filter-inline label { font-size: 12px; color: #334155; display: flex; align-items: center; gap: 4px; cursor: pointer; }
-        .bulk-gen-inline { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-        .bulk-gen-inline .date-input { padding: 4px 6px; font-size: 12px; }
+        .cp-toolbar .view-toggle { flex: 0 0 auto; border-radius: 5px; overflow: hidden; }
+        .cp-toolbar .view-toggle button { padding: 3px 8px; font-size: 11px; }
+        .cp-sep { color: #cbd5e1; font-size: 11px; flex: 0 0 auto; }
+        .net-filter-inline { display: flex; flex-wrap: nowrap; gap: 5px; align-items: center; flex: 0 0 auto; }
+        .net-filter-inline label { font-size: 11px; color: #475569; display: flex; align-items: center; gap: 3px; cursor: pointer; white-space: nowrap; }
+        .net-filter-inline input[type=checkbox] { width: 12px; height: 12px; }
+        .bulk-gen-inline { display: flex; flex-wrap: nowrap; gap: 5px; align-items: center; flex: 0 0 auto; }
+        .bulk-gen-inline input[type=date] { padding: 2px 5px; font-size: 11px; border: 1px solid #d1d5db; border-radius: 4px; height: 24px; }
+        .bulk-gen-inline .mini-btn { padding: 2px 7px; font-size: 11px; height: 24px; }
+        .cp-legend { display: flex; gap: 6px; align-items: center; margin-left: auto; flex: 0 0 auto; }
+        .cp-legend span { font-size: 10px; color: #64748b; white-space: nowrap; display: flex; align-items: center; gap: 2px; }
+        .cp-legend .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
 
         /* ── Chat FAB + Slide-in panel ── */
         #cm-chat-fab {
@@ -152,14 +160,16 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            table-layout: fixed;
         }
-        /* date col = fixed 72px; each visible network fills equal share of the rest */
-        .content-table .col-date { width: 72px; }
-        .content-table.nets-1 .net-header-col,
-        .content-table.nets-1 .net-sub-col { width: auto; }
-        .content-table.nets-2 .net-header-col,
-        .content-table.nets-2 .net-sub-col.post-col { width: auto; }
+        /* date col fixed, networks split remaining space equally */
+        .content-table th.date-th,
+        .content-table td.date-cell { width: 68px; min-width: 68px; max-width: 68px; }
+        /* category col */
+        .content-table th.cat-th,
+        .content-table td.category-cell { width: 180px; min-width: 160px; }
+        /* post col fills rest */
+        .content-table th.post-th,
+        .content-table td.post-td { min-width: 260px; }
 
         .content-table th {
             background: #5a6c7d;
@@ -461,43 +471,40 @@
                     }
                 }
                 ?>
-                <!-- Компактний тулбар -->
+                <!-- Компактний тулбар — одна полоска -->
                 <div class="cp-toolbar">
                     <div class="view-toggle" id="view-toggle">
-                        <button type="button" data-view="table" class="active">📋</button>
-                        <button type="button" data-view="calendar">📅</button>
+                        <button type="button" data-view="table" class="active" title="Таблиця">☰</button>
+                        <button type="button" data-view="calendar" title="Календар">▦</button>
                     </div>
-                    <span style="font-size:11px;color:#94a3b8;">|</span>
+                    <span class="cp-sep">|</span>
                     <div class="net-filter-inline" id="network-filter">
-                        <span style="font-size:11px;color:#64748b;font-weight:600;">Мережі:</span>
                         <?php foreach ($enabledNetworks as $network): ?>
                             <label>
                                 <input type="checkbox" class="network-vis-cb"
                                     data-filter-network-id="<?php echo (int) $network['id']; ?>" checked
-                                    style="cursor:pointer;width:13px;height:13px;accent-color:#5a6c7d;">
+                                    style="accent-color:#5a6c7d;">
                                 <?php echo htmlspecialchars($network['name'], ENT_QUOTES, 'UTF-8'); ?>
                             </label>
                         <?php endforeach; ?>
                     </div>
-                    <span style="font-size:11px;color:#94a3b8;">|</span>
+                    <span class="cp-sep">|</span>
                     <div class="bulk-gen-inline">
-                        <span style="font-size:11px;color:#64748b;font-weight:600;">⚡</span>
-                        <button type="button" class="mini-btn add" id="bulk-generate-selected" style="padding:4px 8px;font-size:11px;">Вибрані (<span id="bulk-selected-count">0</span>)</button>
-                        <input type="date" id="bulk-day-input" class="date-input"
-                            value="<?php echo htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8'); ?>">
-                        <button type="button" class="mini-btn add" id="bulk-generate-day" style="padding:4px 8px;font-size:11px;">День</button>
-                        <span id="bulk-generation-status" class="muted" style="font-size:11px;"></span>
+                        <span style="font-size:11px;color:#64748b;">⚡</span>
+                        <button type="button" class="mini-btn add" id="bulk-generate-selected">Вибр.(<span id="bulk-selected-count">0</span>)</button>
+                        <input type="date" id="bulk-day-input" value="<?php echo htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8'); ?>">
+                        <button type="button" class="mini-btn add" id="bulk-generate-day">День</button>
+                        <span id="bulk-generation-status" style="font-size:10px;color:#64748b;"></span>
                     </div>
-                    <span style="font-size:11px;color:#94a3b8;">|</span>
-                    <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#334155;cursor:pointer;">
-                        <input type="checkbox" id="toggle-details" style="cursor:pointer;width:13px;height:13px;accent-color:#5a6c7d;">
-                        🔎 Аватар
+                    <span class="cp-sep">|</span>
+                    <label style="display:flex;align-items:center;gap:3px;font-size:11px;color:#475569;cursor:pointer;white-space:nowrap;">
+                        <input type="checkbox" id="toggle-details" style="width:12px;height:12px;accent-color:#5a6c7d;">
+                        Аватар
                     </label>
-                    <div class="ct-legend" style="margin:0;flex:1;justify-content:flex-end;">
-                        <span style="font-size:10px;color:#94a3b8;">Аудиторія:</span>
-                        <span style="font-size:10px;"><span class="dot" style="background:#22c55e"></span>Тепл.</span>
-                        <span style="font-size:10px;"><span class="dot" style="background:#f59e0b"></span>Скепт.</span>
-                        <span style="font-size:10px;"><span class="dot" style="background:#3b82f6"></span>Нов.</span>
+                    <div class="cp-legend">
+                        <span><span class="dot" style="background:#22c55e"></span>Тепл.</span>
+                        <span><span class="dot" style="background:#f59e0b"></span>Скепт.</span>
+                        <span><span class="dot" style="background:#3b82f6"></span>Нов.</span>
                     </div>
                 </div><!-- /cp-toolbar -->
 
@@ -587,7 +594,7 @@
                     <table class="content-table">
                         <thead>
                             <tr>
-                                <th style="width:7%;text-align:center;">📅 Дата</th>
+                                <th class="date-th" style="text-align:center;">📅</th>
                                 <?php foreach ($enabledNetworks as $network): ?>
                                     <th colspan="2" style="text-align:center;" class="net-header-col"
                                         data-network-id="<?php echo (int) $network['id']; ?>">
@@ -596,11 +603,11 @@
                                 <?php endforeach; ?>
                             </tr>
                             <tr style="border-bottom:2px solid #5a6c7d;">
-                                <th></th>
+                                <th class="date-th"></th>
                                 <?php foreach ($enabledNetworks as $network): ?>
-                                    <th style="width:10%;font-size:12px;" class="net-sub-col"
+                                    <th class="cat-th net-sub-col" style="font-size:11px;"
                                         data-network-id="<?php echo (int) $network['id']; ?>">Категорія</th>
-                                    <th style="width:45%;font-size:12px;" class="net-sub-col"
+                                    <th class="post-th net-sub-col" style="font-size:11px;"
                                         data-network-id="<?php echo (int) $network['id']; ?>">Пост</th>
                                 <?php endforeach; ?>
                             </tr>
